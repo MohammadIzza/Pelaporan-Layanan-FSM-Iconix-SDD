@@ -1,0 +1,30 @@
+# Rahasia dan kredensial (n8n, OpenRouter, Telegram, basis data)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dependensi dan hasil build
+node_modules/
+.next/
+out/
+build/
+dist/
+coverage/
+
+# Naskah skripsi dan berkas Office (disimpan di luar repo)
+*.docx
+~$*
+
+# Sistem operasi dan editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/*
+!.vscode/settings.json
+.idea/
+
+# Log
+*.log
+npm-debug.log*
