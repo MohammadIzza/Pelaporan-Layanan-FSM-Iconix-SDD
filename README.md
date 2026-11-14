@@ -36,7 +36,8 @@ Requirements ─► Milestone 1: Requirements Review
 
 - Analisis dan perancangan dilakukan oleh peneliti.
 - AI coding agent hanya dipakai pada tahap implementation.
-- Kasus uji disusun peneliti dari acceptance criteria. Kasus uji tidak dibuat oleh AI.
+- Pengujian dua lapis. AI coding agent menulis unit test dari spesifikasi, dan setiap unit test direview peneliti. Kelulusan setiap use case ditentukan oleh black-box test yang disusun peneliti dari acceptance criteria.
+- Setiap use case dikerjakan di branch sendiri dan di-merge ke `main` setelah seluruh skenario uji lulus.
 
 ## Struktur Repositori
 

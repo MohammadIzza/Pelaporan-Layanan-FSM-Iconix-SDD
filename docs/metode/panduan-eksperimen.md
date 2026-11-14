@@ -235,17 +235,37 @@ specify init --here --force --integration claude --integration-options="--no-mod
 - Perintah dipanggil sebagai skill: `/speckit-specify`, `/speckit-plan`, dan seterusnya. Penulisan `/speckit.specify` di dokumentasi adalah notasi umum [S agentic-sdd].
 - **Branch git tidak dibuat otomatis lagi.** Fitur aktif dicatat di `.specify/feature.json`. Branch per fitur adalah ekstensi opsional (`specify extension add git`) [S quickstart, existing-projects].
 
+**Keputusan: satu branch per use case lewat ekstensi git Spec Kit.**
+
+```bash
+specify extension add git            # sekali, langsung setelah init; catat versinya di log
+```
+
+- Setiap `/speckit-specify` membuat branch fitur bernomor, misalnya `001-uc-01-…`.
+- Semua iterasi use case itu (spesifikasi, kode, perbaikan) dikerjakan di branch tersebut.
+- Branch di-merge ke `main` hanya setelah seluruh skenario black-box lulus dan Code Review and Model Update selesai. Dengan begitu `main` hanya berisi use case yang sudah lulus.
+- Setelah dipasang, periksa perilaku nyata ekstensi (nama branch, kapan dibuat), lalu catat di log iterasi pertama. Kalau berbeda dari uraian di atas, ikuti perilaku alatnya dan perbarui panduan ini.
+
 ### 5.2 Constitution (sekali) [S agentic-sdd; R Bab 7; Bab III Tabel 3.2]
 
-Isinya hanya prinsip yang benar-benar dipegang. Jangan mengarang aturan sekadar untuk mengisi template [S existing-projects §2]. Template bawaan memuat contoh *Test-First Imperative* (TDD oleh agen) [S spec-driven.md]. Ini harus disesuaikan dengan Bab III: **kasus uji black-box disusun peneliti, bukan agen** (3.2.9). Tentukan juga apakah agen boleh menulis unit/integration test otomatis.
+Isinya hanya prinsip yang benar-benar dipegang. Jangan mengarang aturan sekadar untuk mengisi template [S existing-projects §2]. Template bawaan memuat contoh prinsip seperti *Library-First* dan *Test-First (NON-NEGOTIABLE)* [S spec-driven.md]. **Keduanya tidak dipakai mentah-mentah:**
+- *Library-First* tidak relevan untuk aplikasi web satu proyek.
+- *Test-First* untuk semua lapisan bertentangan dengan Martinelli, yang menempatkan TDD di dalam alur spec-first dan hanya cocok untuk logika bisnis, layanan, dan API, bukan UI [M Bab 6 hlm. 93, 97].
 
-Usulan isi constitution:
-- teknologi: Next.js + TypeScript, PostgreSQL, REST;
-- aturan keamanan (otorisasi di backend, secret tidak bocor ke client);
-- kegagalan n8n tidak menggagalkan transaksi;
-- agen hanya mengerjakan use case yang disebut ID-nya;
-- ID use case dirujuk di kode, test, dan commit;
-- **alur n8n di luar cakupan agen**.
+Isi constitution yang ditetapkan (dimasukkan sebagai bahan `/speckit-constitution`):
+
+| No | Prinsip | Dasar |
+|---|---|---|
+| 1 | **Spesifikasi adalah sumber kebenaran.** Agen hanya mengerjakan use case atau proses sistem yang ID-nya disebut. Perilaku di luar teks use case tidak boleh ditambahkan, dan business rule tidak boleh dilewati. | M Bab 1, Bab 5 |
+| 2 | **Alternate course wajib diimplementasikan**, sama seperti basic course. | R Bab 10 pedoman 1 |
+| 3 | **Keterlacakan.** ID use case (UC-xx/PS-xx), FR, dan BR dirujuk di nama tes, komentar seperlunya, dan pesan commit (Conventional Commits, bahasa Indonesia). | M Bab 4; R Bab 13 |
+| 4 | **Teknologi:** Next.js + TypeScript, PostgreSQL, REST API. Bot Telegram dan n8n memanggil endpoint yang sama dengan aplikasi web. | Bab III, technical architecture [R Bab 7] |
+| 5 | **Keamanan:** otorisasi peran diperiksa di backend. Secret (kunci OpenRouter, token bot, kredensial n8n) tidak pernah dikirim ke client atau di-commit. | NFR |
+| 6 | **Integrasi n8n:** kegagalan atau timeout n8n tidak menggagalkan transaksi utama (misalnya Tiket tetap tersimpan). Alur di dalam n8n **di luar cakupan agen**. | K-14; Bab III |
+| 7 | **Tes dua lapis.** Agen menulis unit/integration test dari spesifikasi: minimal satu per controller robustness, satu per alur, dan satu per business rule. Nama tes memuat ID use case, dan assertion memakai postcondition, bukan detail internal. Tes ini wajib direview peneliti dan **tidak menentukan kelulusan**. Kelulusan ditentukan black-box test peneliti. | R Bab 1 hlm. 17–18, Bab 12; M Bab 6 hlm. 94, 97; Bab III 3.2.9 |
+| 8 | **Sinkronisasi, bukan regenerasi.** Kalau use case berubah, ubah hanya bagian kode yang terdampak. | M Bab 5 hlm. 76–78 |
+
+Template `tasks.md` Spec Kit menganggap tugas tes **opsional dan hanya dibuat kalau diminta** [S tasks-template]. Prinsip no. 7 membuat permintaan itu eksplisit, sehingga setiap `tasks.md` memuat tugas tes.
 
 ### 5.3 Template spesifikasi berformat use case [S customization]
 
@@ -309,7 +329,14 @@ Martinelli membuat kerangka proyek dengan generator atau template standar, bukan
 | Cakupan diukur terhadap spesifikasi: setiap alur dan setiap business rule harus teruji | M Bab 6 hlm. 95 |
 | Jangan berlebihan memakai mock. Mock n8n hanya untuk mensimulasikan respons dan kegagalan sistem luar. | R Bab 12 Don'ts 10 |
 
-Dalam penelitian ini, **kasus uji black-box disusun peneliti dari AC** (Bab III 3.2.9) dan dicatat di `docs/pengujian/UC-xx.md` beserta statusnya (Lulus/Gagal/Tidak dapat dijalankan).
+Dalam penelitian ini pengujian dibagi **dua lapis** (Bab III 3.2.9):
+
+| Lapis | Dibuat oleh | Isi | Fungsi |
+|---|---|---|---|
+| Unit/integration test otomatis | Agen, pada tahap implement | Minimal satu per controller [R], satu per alur, dan satu per business rule [M]. Assertion memakai postcondition. | Pengaman regresi selama iterasi. Direview peneliti dengan tiga pertanyaan di atas, dan hasil review dicatat di log iterasi. **Tidak menentukan kelulusan.** |
+| Black-box test (acceptance) | **Peneliti**, dari AC | Satu skenario untuk basic course dan untuk setiap alternate course | **Penentu kelulusan use case.** Dicatat di `docs/pengujian/UC-xx.md` beserta statusnya (Lulus/Gagal/Tidak dapat dijalankan). |
+
+Kalau tes buatan agen gagal pada pertanyaan ketiga (tetap lulus saat aturan sengaja dirusak), catat sebagai temuan kualitas tes buatan AI di log iterasi. Temuan ini bisa menjadi bahan pembahasan Bab IV.
 
 ---
 
@@ -341,6 +368,6 @@ Hasil membandingkan dokumen saat ini dengan ketiga sumber:
 | 4 | **Ada kalimat pasif** di teks use case, misalnya "tiket tidak dibuat" dan "status tidak berubah". | R Bab 3 pedoman 8; Bab 4 langkah 2 | Ubah menjadi aktif: "Sistem tidak menyimpan Tiket". | **Selesai (K-17)**, di requirement draf 3. |
 | 5 | **GUI storyboard belum ada.** | R Bab 4 pedoman 3 | Buat sketsa setiap halaman yang disebut di use case (daftar halaman ada di requirement Bagian 11). | Belum: sebelum Requirements Review |
 | 6 | Beberapa use case cukup panjang (UC-05 punya 5 alternate, UC-18 punya 6). | R Bab 3 aturan dua paragraf | Periksa saat robustness analysis. Kalau diagramnya terlalu padat, pecah use case-nya. | Belum: tahap Analysis |
-| 7 | **Bab III Tabel 3.2** menyebut keluaran implement adalah "kode sumber dan pengujian yang dihasilkan AI", sedangkan **3.2.9** menyatakan kasus uji tidak diserahkan ke AI. | M Bab 6 hlm. 97 | Tegaskan di Bab III dan constitution: tes otomatis buatan agen boleh ada sebagai pelengkap, tetapi **kelulusan ditentukan kasus uji black-box buatan peneliti**. | Belum: revisi naskah dan constitution |
-| 8 | Bab III mengasumsikan Spec Kit membuat branch otomatis. Di v1.4.0, branch adalah ekstensi opsional. | S quickstart | Putuskan: pakai `specify extension add git`, atau buat branch manual per use case. Sesuaikan naskah bila perlu. | Belum: saat instalasi Spec Kit |
-| 9 | Template constitution bawaan Spec Kit berisi Test-First (TDD oleh agen) dan Library-First. | S spec-driven.md | Jangan mengikuti template mentah-mentah. Isi constitution sesuai §5.2. | Belum: saat `/speckit-constitution` |
+| 7 | **Bab III Tabel 3.2** menyebut keluaran implement adalah "kode sumber dan pengujian yang dihasilkan AI", sedangkan **3.2.9** menyatakan kasus uji tidak diserahkan ke AI. | M Bab 6 hlm. 97 | Tegaskan di Bab III dan constitution: tes otomatis buatan agen boleh ada sebagai pelengkap, tetapi **kelulusan ditentukan kasus uji black-box buatan peneliti**. | **Selesai:** pengujian dua lapis berdasarkan R Bab 1 & 12 dan M Bab 6. Naskah 2.2.13, Tabel 3.2, 3.2.8.2, dan 3.2.9 sudah direvisi. Lihat §5.2 no. 7 dan §7. |
+| 8 | Spec Kit v1.4.0 tidak lagi membuat branch otomatis, karena branch kini ekstensi opsional. (Koreksi: naskah Bab III ternyata tidak menyebut branch, jadi naskah tidak perlu diubah.) | S quickstart | Putuskan: pakai `specify extension add git`, atau buat branch manual per use case. | **Selesai:** ekstensi git, satu branch per use case, merge setelah lulus (§5.1). Diterapkan saat instalasi. |
+| 9 | Template constitution bawaan Spec Kit berisi Test-First (TDD oleh agen) dan Library-First. | S spec-driven.md | Jangan mengikuti template mentah-mentah. Isi constitution sesuai §5.2. | **Selesai:** isi ditetapkan di §5.2 (8 prinsip). Diterapkan saat `/speckit-constitution`. |
