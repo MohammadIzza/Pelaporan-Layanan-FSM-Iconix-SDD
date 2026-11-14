@@ -10,13 +10,15 @@ Repositori ini adalah bagian dari skripsi Program Studi Informatika, Universitas
 
 ## Cakupan
 
-Aplikasi mencakup 11 use case inti dalam tiga proses bisnis:
+Aplikasi mencakup 10 use case inti dan 3 proses sistem dalam tiga proses bisnis:
 
-| Proses | Use case |
-|---|---|
-| Permintaan layanan ad-hoc | UC-01 Membuat Permintaan Layanan, UC-47 Mengklasifikasikan Tiket, UC-54 Mengklasifikasikan Tiket Secara Manual, UC-09 Claim Tiket, UC-15 Menyelesaikan Pekerjaan, UC-05 Memverifikasi Hasil Pekerjaan |
-| Laporan pekerjaan mandiri | UC-16 Membuat Laporan Pekerjaan Mandiri, UC-29 Memverifikasi Laporan Mandiri |
-| Tugas rutin terjadwal | UC-32 Membuat Jadwal Tugas Rutin, UC-18 Menjalankan Tugas Rutin, UC-30 Memverifikasi Tugas Rutin |
+| Proses | Use case | Proses sistem |
+|---|---|---|
+| Permintaan layanan ad-hoc | UC-01 Membuat Permintaan Layanan, UC-54 Mengklasifikasikan Tiket Secara Manual, UC-09 Claim Tiket, UC-15 Menyelesaikan Pekerjaan, UC-05 Memverifikasi Hasil Pekerjaan | PS-01 Klasifikasikan Tiket (AI melalui n8n) |
+| Laporan pekerjaan mandiri | UC-16 Membuat Laporan Pekerjaan Mandiri, UC-29 Memverifikasi Laporan Mandiri | — |
+| Tugas rutin terjadwal | UC-32 Membuat Jadwal Tugas Rutin, UC-18 Menjalankan Tugas Rutin, UC-30 Memverifikasi Tugas Rutin | PS-02 Buat Tugas Rutin Terjadwal, PS-03 Tandai Tugas Overdue |
+
+Proses sistem adalah proses yang seluruhnya dijalankan sistem tanpa dialog dengan aktor. Mengikuti Rosenberg dan Stephens (2007, Bab 3), proses ini dimodelkan sebagai algoritma bernama yang dirujuk dari use case, bukan sebagai use case.
 
 Rincian kebutuhan, teks use case, dan acceptance criteria ada di [`docs/requirements/use-case-inti.md`](docs/requirements/use-case-inti.md).
 

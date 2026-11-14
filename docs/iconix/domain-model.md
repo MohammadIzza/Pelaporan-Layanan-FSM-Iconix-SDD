@@ -38,9 +38,9 @@ Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis d
 | Kelas | Arti | Use case |
 |---|---|---|
 | Pekerjaan | Kelas umum untuk semua pekerjaan yang dikerjakan petugas dan diverifikasi. Memiliki status, primary assignee, hasil, verifikasi, dan timeline. | — |
-| Tiket | Permintaan layanan ad-hoc dari pelapor. | UC-01, UC-47, UC-54, UC-09, UC-15, UC-05 |
+| Tiket | Permintaan layanan ad-hoc dari pelapor. | UC-01, PS-01, UC-54, UC-09, UC-15, UC-05 |
 | LaporanMandiri | Pekerjaan yang dilaporkan dan dikerjakan sendiri oleh petugas. Jenis pekerjaannya adalah jenis tiket yang membutuhkan skill petugas tersebut. | UC-16, UC-29 |
-| TugasRutin | Tugas yang dibuat otomatis dari jadwal rutin untuk satu petugas pada satu waktu. Dapat bertanda Overdue. | UC-18, UC-30 |
+| TugasRutin | Tugas yang dibuat otomatis dari jadwal rutin untuk satu petugas pada satu waktu. Dapat bertanda Overdue. | PS-02, UC-18, PS-03, UC-30 |
 | HasilPekerjaan | Satu kali penyelesaian atau pengajuan (*completion attempt*): catatan, foto, lokasi, dan centang checklist. Hasil lama tidak ditimpa saat Reopen. | UC-15, UC-16, UC-18 |
 | Verifikasi | Keputusan terima atau tolak beserta alasan, verifikator, dan waktunya. Penolakan menghasilkan Reopen. | UC-05, UC-29, UC-30 |
 | TimelineEvent | Catatan setiap perubahan status dan aksi penting beserta pelaku dan waktunya (audit). | Semua |
@@ -51,8 +51,8 @@ Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis d
 
 | Kelas | Arti | Use case |
 |---|---|---|
-| JenisTiket | Kategori layanan yang sudah dikonfigurasi (data awal). Setiap jenis membutuhkan satu atau lebih skill. Dipakai untuk tiket dan sebagai jenis pekerjaan laporan mandiri. | UC-47, UC-54, UC-16 |
-| Klasifikasi | Satu kali penentuan jenis tiket: sumber (AI atau manual), jenis tiket, confidence score, pelaku, dan hasilnya (berhasil atau gagal). Riwayatnya disimpan. | UC-47, UC-54 |
+| JenisTiket | Kategori layanan yang sudah dikonfigurasi (data awal). Setiap jenis membutuhkan satu atau lebih skill. Dipakai untuk tiket dan sebagai jenis pekerjaan laporan mandiri. | PS-01, UC-54, UC-16 |
+| Klasifikasi | Satu kali penentuan jenis tiket: sumber (AI atau manual), jenis tiket, confidence score, pelaku, dan hasilnya (berhasil atau gagal). Riwayatnya disimpan. | PS-01, UC-54 |
 | Rating | Nilai 1–5 dan komentar opsional dari pelapor saat menerima hasil. Terkunci setelah Closed. | UC-05 |
 
 ### Tugas Rutin
