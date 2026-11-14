@@ -44,7 +44,7 @@ Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis d
 | HasilPekerjaan | Satu kali penyelesaian atau pengajuan (*completion attempt*): catatan, foto, lokasi, dan centang checklist. Hasil lama tidak ditimpa saat Reopen. | UC-15, UC-16, UC-18 |
 | Verifikasi | Keputusan terima atau tolak beserta alasan, verifikator, dan waktunya. Penolakan menghasilkan Reopen. | UC-05, UC-29, UC-30 |
 | TimelineEvent | Catatan setiap perubahan status dan aksi penting beserta pelaku dan waktunya (audit). | Semua |
-| Lampiran | Foto yang dilampirkan saat membuat tiket atau menyelesaikan pekerjaan. | UC-01, UC-15, UC-16, UC-18 |
+| Lampiran | Foto yang dilampirkan saat membuat Tiket, memulai Laporan Mandiri (foto awal, K-18), atau menyelesaikan pekerjaan. Satu foto JPG/PNG maksimal 5 MB per unggahan (BR-100). | UC-01, UC-15, UC-16, UC-18 |
 | LokasiGPS | Titik lokasi yang direkam sekali pada saat aksi bukti, bukan pelacakan terus-menerus. | UC-01, UC-18 |
 
 ### Permintaan Layanan
