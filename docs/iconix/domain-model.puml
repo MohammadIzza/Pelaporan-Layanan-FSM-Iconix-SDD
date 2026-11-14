@@ -1,0 +1,91 @@
+' Domain model awal (tahap Requirements ICONIX).
+' Draf disusun dengan bantuan asisten AI dari kata benda pada teks use case
+' docs/requirements/use-case-inti.md (draf 2), lalu ditinjau peneliti
+' pada 15 Nov 2026. Belum melalui Requirements Review.
+' Penjelasan setiap kelas: domain-model.md.
+
+@startuml domain-model
+title Domain Model Awal — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
+hide circle
+hide empty members
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+package "Organisasi dan Pengguna" {
+  class Pengguna
+  class Peran
+  class UnitKerja
+  class Skill
+  class AkunTelegram
+}
+
+package "Pekerjaan" {
+  abstract class Pekerjaan
+  class Tiket
+  class LaporanMandiri
+  class TugasRutin
+  class HasilPekerjaan
+  class Verifikasi
+  class TimelineEvent
+  class Lampiran
+  class LokasiGPS
+}
+
+package "Permintaan Layanan" {
+  class JenisTiket
+  class Klasifikasi
+  class Rating
+}
+
+package "Tugas Rutin" {
+  class JadwalRutin
+  class AreaKerja
+  class ItemChecklist
+  class HasilChecklist
+}
+
+' --- Organisasi dan pengguna ---
+Pengguna "1" o-- "1..*" Peran
+Pengguna "1" o-- "0..*" Skill
+Pengguna "1" o-- "0..1" AkunTelegram
+Pengguna "0..*" --> "1" UnitKerja : bekerja di
+Pengguna "0..1" -- "0..*" Pengguna : atasan dari >
+
+' --- Generalisasi pekerjaan ---
+Pekerjaan <|-- Tiket
+Pekerjaan <|-- LaporanMandiri
+Pekerjaan <|-- TugasRutin
+
+' --- Bagian bersama setiap pekerjaan ---
+Pekerjaan "0..*" --> "0..1" Pengguna : primary assignee
+Pekerjaan "1" o-- "0..*" HasilPekerjaan
+Pekerjaan "1" o-- "0..*" Verifikasi
+Pekerjaan "1" o-- "1..*" TimelineEvent
+Verifikasi "0..*" --> "1" Pengguna : verifikator
+TimelineEvent "0..*" --> "0..1" Pengguna : pelaku
+HasilPekerjaan "1" o-- "0..*" Lampiran
+HasilPekerjaan "1" o-- "0..1" LokasiGPS
+
+' --- Permintaan layanan (tiket) ---
+Tiket "0..*" --> "1" Pengguna : pelapor
+Tiket "0..*" --> "1" UnitKerja : unit asal
+Tiket "0..*" --> "0..1" JenisTiket
+Tiket "1" o-- "0..*" Lampiran
+Tiket "1" o-- "0..1" LokasiGPS
+Tiket "1" o-- "0..*" Klasifikasi
+Tiket "1" o-- "0..1" Rating
+Klasifikasi "0..*" --> "0..1" JenisTiket
+JenisTiket "0..*" --> "1..*" Skill : membutuhkan
+
+' --- Laporan mandiri ---
+LaporanMandiri "0..*" --> "1" JenisTiket : jenis pekerjaan
+
+' --- Tugas rutin ---
+JadwalRutin "1" o-- "1..*" ItemChecklist
+JadwalRutin "0..*" --> "1" AreaKerja
+JadwalRutin "0..*" --> "1" Pengguna : dibuat oleh (atasan)
+JadwalRutin "0..*" --> "1..*" Pengguna : petugas ditugaskan
+JadwalRutin "1" --> "0..*" TugasRutin : menghasilkan
+HasilPekerjaan "1" o-- "0..*" HasilChecklist
+HasilChecklist "0..*" --> "1" ItemChecklist
+@enduml
