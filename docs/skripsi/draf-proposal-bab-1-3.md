@@ -6,7 +6,7 @@
 >
 > **Status:** draf proposal, salinan teks per 15 Nov 2026. Naskah resmi tetap berupa berkas Word yang disimpan di luar repositori.
 >
-> **Pembaruan:** teks ini sudah disesuaikan dengan requirement draf 3 (`docs/requirements/use-case-inti.md`): 10 use case inti dan 3 proses sistem, penjadwal tugas rutin di aplikasi, klasifikasi manual oleh atasan, dan bot Telegram sebagai jalur kedua. Perubahan ini **belum diterapkan ke naskah Word**.
+> **Pembaruan:** teks ini sudah disesuaikan dengan requirement draf 3 (`docs/requirements/use-case-inti.md`): 10 use case inti dan 3 proses sistem, penjadwal tugas rutin di aplikasi, klasifikasi manual oleh atasan, dan bot Telegram sebagai jalur kedua. Kedudukan unit test buatan AI Coding Agent juga ditegaskan di Subbab 2.2.13, Tabel 3.2, 3.2.8.2, dan 3.2.9. Perubahan ini **belum diterapkan ke naskah Word**.
 >
 > **Catatan konversi:** isi Bab I–III dikonversi otomatis dari Word ke Markdown sebagai konteks penelitian. Gambar ditandai `[Gambar]` dan diikuti judulnya. Daftar pustaka belum tersedia di naskah sumber. Penomoran daftar diubah menjadi butir.
 
@@ -335,7 +335,7 @@ Gambar 2.12  Hubungan Tahap ICONIX Process dan Jenis Pengujian (disusun berdasar
 
 Pengujian sistem dilakukan setelah pengujian integrasi dengan kasus uji fungsional dan perilaku yang disusun dari spesifikasi tanpa melihat cara kerja internal komponen. Sebagian besar pengujian ini berupa pengujian alur use case, proses bisnis, dan kebutuhan fungsional (Rosenberg & Stephens, 2007). Pengujian berdasarkan spesifikasi komponen atau sistem seperti ini disebut black-box testing (International Software Testing Qualifications Board, t.t.). Persiapan pengujian sistem dapat dimulai segera setelah teks use case ditulis, tetapi sebaiknya menunggu preliminary design use case tersebut selesai karena hasilnya dapat mengubah use case (Rosenberg & Stephens, 2007). Sementara itu, pengujian penerimaan (acceptance testing) adalah pengujian formal oleh atau atas nama pelanggan untuk menentukan apakah sistem sudah memenuhi kebutuhan yang disepakati dalam kontrak (Rosenberg & Stephens, 2007).
 
-Penelitian ini menggunakan black-box testing sebagai satu-satunya teknik pengujian untuk memeriksa pemenuhan kebutuhan fungsional dan acceptance criteria. Kasus uji disusun dari skenario utama dan skenario alternatif setiap use case inti. Cara ini sesuai dengan anjuran ICONIX untuk menguji penerimaan pada tingkat skenario setiap use case (Rosenberg & Stephens, 2007). Pengujian dilakukan pada aplikasi yang kodenya dihasilkan oleh AI Coding Agent melalui GitHub Spec Kit. Dengan demikian, hasil pengujian menunjukkan apakah aplikasi sudah berperilaku sesuai dengan skenario use case yang dirancang.
+Penelitian ini menggunakan black-box testing sebagai satu-satunya teknik untuk menilai pemenuhan kebutuhan fungsional dan acceptance criteria. Unit test tetap ditulis sebagai bagian dari tahap implementation (Rosenberg & Stephens, 2007), tetapi tidak digunakan sebagai dasar penilaian. Kasus uji disusun dari skenario utama dan skenario alternatif setiap use case inti. Cara ini sesuai dengan anjuran ICONIX untuk menguji penerimaan pada tingkat skenario setiap use case (Rosenberg & Stephens, 2007). Pengujian dilakukan pada aplikasi yang kodenya dihasilkan oleh AI Coding Agent melalui GitHub Spec Kit. Dengan demikian, hasil pengujian menunjukkan apakah aplikasi sudah berperilaku sesuai dengan skenario use case yang dirancang.
 
 ## BAB III METODOLOGI PENELITIAN
 
@@ -464,7 +464,7 @@ Tabel 3.2  Pemetaan Artefak ICONIX ke Tahap Spec Kit
 | 3 | Plan | Domain model, robustness diagram, sequence diagram, class diagram, skema basis data, dan spesifikasi API | Rencana teknis implementasi (plan.md, data-model.md, contracts/) |
 | 4 | Tasks | Pesan pada sequence diagram dan controller pada robustness diagram | Daftar tugas implementasi yang berurutan (tasks.md) |
 | 5 | Analyze (opsional) | Keluaran tahap Specify, Plan, dan Tasks | Laporan pertentangan dan kekosongan antardokumen |
-| 6 | Implement | Seluruh keluaran tahap sebelumnya | Kode sumber dan pengujian yang dihasilkan AI Coding Agent |
+| 6 | Implement | Seluruh keluaran tahap sebelumnya | Kode sumber dan unit test yang dihasilkan AI Coding Agent |
 | 7 | Converge | Kode serta keluaran tahap Specify, Plan, dan Tasks | Tugas tambahan jika masih ada kekurangan |
 
 Artefak disimpan sebagai file teks terpisah untuk setiap unit, misalnya setiap use case, agar AI Coding Agent dapat diarahkan membaca artefak yang sesuai dengan tugasnya. Selain gambar, diagram juga disertakan dalam notasi teks yang dapat dibaca AI Coding Agent, misalnya PlantUML seperti pada Cheon (2025). PlantUML adalah alat sumber terbuka untuk menggambar diagram UML dari deskripsi teks sederhana (PlantUML, t.t.). Asisten LLM berbasis percakapan dapat membantu menuliskan diagram rancangan pengembang ke dalam notasi PlantUML, tetapi isi diagram tetap ditentukan oleh pengembang. Bantuan tersebut dicatat agar dapat dibedakan dari artefak yang disusun sendiri oleh pengembang. Template spesifikasi bawaan Spec Kit berbentuk user story, sedangkan ICONIX menuliskan perilaku sistem dalam teks use case. Oleh karena itu, template spesifikasi disesuaikan melalui preset agar memuat teks use case lengkap dengan basic course, alternate course, dan acceptance criteria (Delimarsky & Riem, 2026). Dengan cara ini, teks use case tidak perlu diubah menjadi user story sehingga keterlacakan antara artefak ICONIX dan spesifikasi tetap terjaga.
@@ -477,9 +477,9 @@ Implementasi setiap use case inti dilakukan melalui langkah-langkah berikut:
 
 2. Pengembang menjalankan tahap implement dengan menyebutkan ID use case.
 
-3. AI Coding Agent menghasilkan atau mengubah kode, lalu tahap converge dijalankan. Hasil setiap iterasi disimpan sebagai commit pada sistem kendali versi.
+3. AI Coding Agent menghasilkan atau mengubah kode beserta unit test, lalu tahap converge dijalankan. Hasil setiap iterasi disimpan sebagai commit pada sistem kendali versi.
 
-4. Pengembang menjalankan black-box testing pada seluruh skenario uji use case tersebut (Subbab 3.2.9).
+4. Pengembang meninjau unit test yang dihasilkan AI Coding Agent, lalu menjalankan black-box testing pada seluruh skenario uji use case tersebut (Subbab 3.2.9).
 
 5. Jika ada skenario uji yang gagal, pengembang memberikan umpan balik kepada AI Coding Agent untuk memperbaiki kode sebagai iterasi berikutnya.
 
@@ -491,7 +491,7 @@ Langkah keempat sampai keenam merupakan penerapan milestone Code Review and Mode
 
 #### 3.2.9 Pengujian Sistem
 
-Pengujian dilakukan dengan black-box testing pada skenario utama dan setiap skenario alternatif dari setiap use case inti (Rosenberg & Stephens, 2007). Misalnya, use case dengan tiga skenario alternatif membutuhkan sedikitnya empat skenario uji (Rosenberg & Stephens, 2007). Kasus uji disusun pengembang dari acceptance criteria setiap use case inti. Penyusunan kasus uji tidak diserahkan kepada AI Coding Agent karena AI dapat membuat pengujian, tetapi tidak dapat memastikan pengujian tersebut sesuai dengan perilaku yang dimaksud (Martinelli, 2026). Black-box testing dijalankan setelah setiap iterasi implementasi sampai seluruh skenario uji lulus. Use case yang melibatkan n8n diuji dari sisi aplikasi dengan memeriksa data yang dikirim ke n8n, hasil yang diterima kembali, dan perilaku aplikasi ketika n8n tidak merespons. Jalur bot Telegram diuji dengan memanggil endpoint aplikasi seperti yang dilakukan n8n, termasuk penolakan permintaan dari akun Telegram yang belum ditautkan. Proses sistem yang dipicu waktu, yaitu pembuatan tugas rutin terjadwal dan penandaan tugas terlambat, diuji dengan waktu yang disimulasikan pada lingkungan uji.
+Pengujian dilakukan dengan black-box testing pada skenario utama dan setiap skenario alternatif dari setiap use case inti (Rosenberg & Stephens, 2007). Misalnya, use case dengan tiga skenario alternatif membutuhkan sedikitnya empat skenario uji (Rosenberg & Stephens, 2007). Kasus uji disusun pengembang dari acceptance criteria setiap use case inti. Penyusunan kasus uji tidak diserahkan kepada AI Coding Agent karena AI dapat membuat pengujian, tetapi tidak dapat memastikan pengujian tersebut sesuai dengan perilaku yang dimaksud (Martinelli, 2026). Unit test yang dihasilkan AI Coding Agent disusun sedikitnya satu untuk setiap controller pada robustness diagram (Rosenberg & Stephens, 2007), serta satu untuk setiap alur dan aturan bisnis use case (Martinelli, 2026). Setiap unit test ditinjau pengembang dengan tiga pertanyaan, yaitu apakah assertion sesuai dengan postcondition, apakah persiapan data hanya memakai prasyarat use case, dan apakah pengujian gagal ketika aturan dilanggar (Martinelli, 2026). Unit test berfungsi sebagai pengaman regresi selama iterasi, sedangkan kelulusan use case tetap ditentukan oleh black-box testing. Black-box testing dijalankan setelah setiap iterasi implementasi sampai seluruh skenario uji lulus. Use case yang melibatkan n8n diuji dari sisi aplikasi dengan memeriksa data yang dikirim ke n8n, hasil yang diterima kembali, dan perilaku aplikasi ketika n8n tidak merespons. Jalur bot Telegram diuji dengan memanggil endpoint aplikasi seperti yang dilakukan n8n, termasuk penolakan permintaan dari akun Telegram yang belum ditautkan. Proses sistem yang dipicu waktu, yaitu pembuatan tugas rutin terjadwal dan penandaan tugas terlambat, diuji dengan waktu yang disimulasikan pada lingkungan uji.
 
 ### 3.3 Pengumpulan Data
 
