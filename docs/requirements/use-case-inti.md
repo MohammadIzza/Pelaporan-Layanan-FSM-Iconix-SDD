@@ -25,7 +25,7 @@
   - (B) laporan pekerjaan mandiri;
   - (C) tugas rutin terjadwal.
 - **Cakupan:** 11 use case inti **[Draf 2]**, yaitu 9 use case inti awal ditambah UC-54 (K-3) dan UC-30 (K-8).
-- **Data awal (seed), bukan use case:** akun pengguna, peran, skill, jenis tiket, unit kerja, dan struktur atasan–bawahan.
+- **Data awal (seed), bukan use case:** akun pengguna, peran, skill, jenis tiket, unit kerja, area kerja, dan struktur atasan–bawahan.
 - **Login:** sederhana, tidak dianalisis.
 - **Tidak dibangun:** pengelolaan data oleh admin, SLA, dashboard pimpinan, auto-assignment, auto-close, form khusus per jenis tiket (K-9), dan use case lain di luar 11 use case inti.
 - **Penjadwal tugas rutin [Draf 2]:** berjalan di dalam aplikasi sebagai penjadwal (*cron*), bukan di n8n (K-7).
@@ -537,15 +537,15 @@ Skenario uji minimal: 6.
 | Hasil akhir | Laporan mandiri berstatus Menunggu Verifikasi oleh atasan langsung. |
 
 **Aturan [Draf 2]:**
-- **K-4:** laporan mandiri tidak diklasifikasi AI. Laporan mandiri hanya untuk pekerjaan yang sesuai skill petugas sendiri, sehingga petugas memilih jenis pekerjaan dari skill-nya, dan laporan otomatis dikerjakan oleh petugas tersebut.
+- **K-4:** laporan mandiri tidak diklasifikasi AI. Laporan mandiri hanya untuk pekerjaan yang sesuai skill petugas sendiri, sehingga petugas memilih jenis pekerjaan dari jenis tiket yang membutuhkan skill miliknya (keputusan tinjauan domain model), dan laporan otomatis dikerjakan oleh petugas tersebut.
 - **K-6:** UC-16 adalah satu-satunya jalur bagi petugas yang melaporkan sekaligus mengerjakan pekerjaannya sendiri. Verifikasinya oleh atasan (BR-023).
 - Laporan mandiri tidak memiliki rating maupun kolom komentar (FR-SELF-008/009). Aturan ini sebelumnya ditulis sebagai A3 di draf 1.
 
 **Basic course**
 1. Petugas membuka halaman Buat Laporan Mandiri.
-2. Sistem menampilkan formulir berisi pilihan jenis pekerjaan yang hanya memuat skill petugas, kolom deskripsi, dan unggahan foto **[K-4: diputuskan]**.
+2. Sistem menampilkan formulir berisi pilihan jenis pekerjaan yang hanya memuat jenis tiket yang membutuhkan skill petugas, kolom deskripsi, dan unggahan foto **[K-4: diputuskan]**.
 3. Petugas memilih jenis pekerjaan, menulis deskripsi, lalu menekan tombol Mulai Pengerjaan **[K-1: diputuskan]**.
-4. Sistem memeriksa bahwa jenis pekerjaan dan deskripsi sudah diisi, dan jenis pekerjaan termasuk skill petugas.
+4. Sistem memeriksa bahwa jenis pekerjaan dan deskripsi sudah diisi, dan jenis pekerjaan membutuhkan salah satu skill petugas.
 5. Sistem membuat laporan mandiri, menetapkan petugas sebagai primary assignee, mencatat waktu mulai, dan mengubah status menjadi In Progress.
 6. Setelah pekerjaan selesai, petugas membuka laporan tersebut, menekan Selesai Dikerjakan, menulis catatan, dan melampirkan satu foto hasil.
 7. Sistem memeriksa bahwa catatan dan foto hasil sudah diisi **[Draf 2, disamakan dengan K-2]**.
@@ -562,7 +562,7 @@ Catatan: laporan retrospektif (UC-17) tidak dibangun.
 **Acceptance criteria**
 - **AC-16-1:** **Given** petugas aktif, **When** ia mengisi jenis pekerjaan dan deskripsi lalu menekan Mulai Pengerjaan, **Then** laporan tersimpan berstatus In Progress, petugas menjadi primary assignee, dan waktu mulai tercatat.
 - **AC-16-2:** **Given** laporan In Progress, **When** petugas menekan Selesai dengan catatan dan foto hasil, **Then** status menjadi Menunggu Verifikasi dan laporan tampil di daftar verifikasi atasan langsungnya.
-- **AC-16-3:** **Given** kolom wajib kosong, atau jenis pekerjaan yang dikirim ke endpoint bukan skill petugas, **When** petugas menekan Mulai Pengerjaan, **Then** sistem menampilkan pesan dan laporan tidak dibuat **[Draf 2]**.
+- **AC-16-3:** **Given** kolom wajib kosong, atau jenis pekerjaan yang dikirim ke endpoint tidak membutuhkan skill petugas, **When** petugas menekan Mulai Pengerjaan, **Then** sistem menampilkan pesan dan laporan tidak dibuat **[Draf 2]**.
 - **AC-16-4:** **Given** catatan atau foto hasil kosong, **When** petugas menekan Selesai, **Then** sistem menampilkan pesan dan status tidak berubah.
 - **AC-16-5:** **Given** laporan mandiri, **When** detailnya dibuka, **Then** tidak ada kolom rating maupun komentar (FR-SELF-008/009).
 - **AC-16-6 [Draf 2]:** **Given** laporan berstatus Reopen dengan alasan dari atasan, **When** petugas menyelesaikannya lagi, **Then** status menjadi Menunggu Verifikasi dan hasil sebelumnya tetap tersimpan.
@@ -616,7 +616,7 @@ Skenario uji minimal: 5.
 **Basic course**
 1. Atasan membuka halaman Buat Jadwal Tugas Rutin.
 2. Sistem menampilkan formulir berisi:
-   - nama tugas dan area kerja;
+   - nama tugas dan area kerja (dipilih dari daftar area kerja pada data awal);
    - daftar item checklist, masing-masing ditandai wajib atau opsional;
    - pola pengulangan (setiap hari atau hari tertentu), jam mulai, dan batas waktu;
    - kebutuhan bukti (foto akhir dan GPS);
@@ -753,7 +753,8 @@ Draf 1 mencatat 40 skenario uji untuk 9 use case.
 - struktur organisasi dan relasi atasan–bawahan;
 - skill petugas;
 - jenis tiket beserta skill-nya;
-- unit dan bidang.
+- unit dan bidang;
+- area kerja untuk tugas rutin.
 
 **Use case yang tidak dibangun** (tetap dicatat dan menjadi bahan saran BAB V):
 - UC-02–UC-04: status, timeline, dan komentar;
@@ -794,7 +795,7 @@ Aplikasi hanya diuji pada titik pertukaran datanya, yaitu endpoint yang dipanggi
 | K-1 | UC-10 Memulai Pengerjaan bukan use case inti, padahal UC-15 butuh status In Progress. | Aksi Mulai Pengerjaan dijadikan langkah di UC-15 dan UC-16. | UC-15 langkah 2–3, UC-16 langkah 3–5 |
 | K-2 | Bukti penyelesaian tiket ad-hoc belum diatur di sumber. | Catatan dan 1 foto hasil wajib. Aturan yang sama dipakai di UC-16. | UC-15 langkah 4–5, UC-16 langkah 6–7 |
 | K-3 | Siapa yang menangani tiket "Belum terklasifikasi"? | Tambah use case inti UC-54: Atasan (SPV) mengklasifikasikan tiket yang gagal diklasifikasi AI, dan dapat mengoreksi hasil AI selama tiket belum di-claim. | UC-54 baru, UC-47 A1, UC-01 A4 |
-| K-4 | Apakah laporan mandiri juga diklasifikasi AI? | Tidak. Laporan mandiri hanya untuk pekerjaan sesuai skill petugas sendiri, dan petugas memilih jenis pekerjaan dari skill-nya. | UC-16 aturan, langkah 2 dan 4 |
+| K-4 | Apakah laporan mandiri juga diklasifikasi AI? | Tidak. Laporan mandiri hanya untuk pekerjaan sesuai skill petugas sendiri, dan petugas memilih jenis pekerjaan dari jenis tiket yang membutuhkan skill-nya. | UC-16 aturan, langkah 2 dan 4 |
 | K-5 | Atasan menolak laporan mandiri. | Tolak dengan alasan wajib, lalu Reopen ke petugas yang sama. Hasil lama tetap tersimpan. | UC-29 A1, UC-16 A3 |
 | K-6 | BR-023: jika pelapor = pelaksana, verifikator adalah atasan. | Petugas yang melaporkan masalah di luar skill-nya memakai UC-01 seperti pelapor lain. Pekerjaan yang sesuai skill sendiri dibuat sebagai laporan mandiri (UC-16), dikerjakan sendiri, dan diverifikasi atasan. Petugas tidak dapat meng-claim tiket UC-01 yang ia laporkan sendiri. | UC-09 langkah 2 dan 4, A3; UC-05 catatan; BR-023 |
 | K-7 | Pembuatan tugas rutin otomatis dijalankan oleh siapa? | Penjadwal (*cron*) di aplikasi. | UC-32 langkah 6, UC-18 A3 |
