@@ -1,0 +1,520 @@
+# Draf Proposal Skripsi — Bab I–III
+
+> **Judul:** Rancang Bangun Aplikasi Pelaporan Layanan Operasional Fakultas Sains dan Matematika Universitas Diponegoro Menggunakan Metode ICONIX Process dan Pendekatan Spec-Driven Development dengan Integrasi n8n
+>
+> **Penulis:** Mohammad Izza Hakiki (24060123140139), Program Studi Informatika, Universitas Diponegoro
+>
+> **Status:** draf proposal, salinan teks per 15 Nov 2026. Naskah resmi tetap berupa berkas Word yang disimpan di luar repositori.
+>
+> **Catatan konversi:** isi Bab I–III dikonversi otomatis dari Word ke Markdown sebagai konteks penelitian. Gambar ditandai `[Gambar]` dan diikuti judulnya. Daftar pustaka belum tersedia di naskah sumber. Penomoran daftar diubah menjadi butir.
+
+## BAB I PENDAHULUAN
+
+Bab pendahuluan ini membahas latar belakang, rumusan masalah, tujuan, manfaat, ruang lingkup, dan sistematika penulisan skripsi. Latar belakang menguraikan kebutuhan aplikasi pelaporan baru di FSM UNDIP serta permasalahan penggunaan AI Coding Agent dalam pengembangan perangkat lunak. Dari uraian tersebut, rumusan masalah dan tujuan penelitian ditetapkan. Manfaat dan ruang lingkup kemudian menjelaskan pihak yang dapat memanfaatkan hasil penelitian serta batasan kajiannya. Bagian akhir bab ini menjelaskan sistematika penulisan skripsi.
+
+### 1.1 Latar Belakang
+
+Layanan operasional di perguruan tinggi, seperti kebersihan, keamanan, dan pemeliharaan fasilitas, perlu dicatat dengan baik agar setiap pekerjaan dapat dipantau sampai selesai. Fakultas Sains dan Matematika (FSM) UNDIP mencatat pekerjaan tersebut melalui sebuah aplikasi pelaporan. Selama periode 22 Juni hingga 31 Agustus 2026, aplikasi ini mencatat 2.164 tiket. Sebanyak 98,29% tiket tersebut merupakan laporan pekerjaan mandiri dari petugas, terutama dari bidang kebersihan (52,96%) dan keamanan (15,39%) yang bersifat rutin. Meskipun sebagian besar pekerjaannya rutin, aplikasi tersebut belum dapat menjadwalkan tugas rutin secara otomatis. Aplikasi tersebut juga belum memanfaatkan AI untuk mengelompokkan laporan. Oleh karena itu, FSM UNDIP membutuhkan aplikasi pelaporan baru yang dibangun dari awal dan dapat menjalankan penjadwalan tugas, notifikasi, serta klasifikasi laporan secara otomatis. Otomatisasi tersebut dapat dijalankan dengan n8n, yaitu platform otomatisasi alur kerja berbasis low-code (Sholihah dkk., 2026). Alur kerja n8n dapat dipicu oleh data yang dikirim aplikasi melalui webhook atau dijalankan sesuai jadwal tertentu (n8n, t.t.-b, t.t.-c). n8n juga dapat dihubungkan dengan bot Telegram sebagai saluran notifikasi dan dengan LLM untuk memproses bahasa (Sholihah dkk., 2026). Dengan pembagian ini, aplikasi cukup mengirim dan menerima data dari n8n sehingga hubungan keduanya perlu dirancang pada arsitektur sistem.
+
+Aplikasi tersebut dapat dibangun dengan bantuan Large Language Model (LLM) yang kini banyak digunakan dalam pengembangan perangkat lunak. Kajian terhadap 395 artikel menunjukkan bahwa penelitian LLM di bidang rekayasa perangkat lunak paling banyak membahas pembuatan kode (code generation) (Hou dkk., 2024). Salah satu cara penggunaan LLM adalah vibe coding, yaitu pengembang memberikan arahan kepada AI dalam bahasa sehari-hari, sedangkan kodenya ditulis oleh AI (Meske dkk., 2025). LLM juga dapat bekerja sebagai agen yang membaca dan mengubah kode program serta menjalankan perintah secara mandiri. Salah satu contoh agen tersebut adalah Claude Code. Dalam penelitian ini, agen seperti itu disebut AI Coding Agent.
+
+Kode yang dihasilkan LLM tidak selalu benar. Dari 4.066 program yang dibuat oleh ChatGPT, sebanyak 1.082 program masih memberikan hasil yang salah (Liu dkk., 2024). Hal serupa juga terjadi pada AI Coding Agent. Ehsani dkk. (2026) menemukan bahwa sebagian kode dari AI Coding Agent yang dikirim ke berbagai proyek perangkat lunak di GitHub ditolak karena gagal diuji atau isinya salah. Salah satu penyebabnya adalah kebutuhan yang ambigu atau tidak lengkap. Kebutuhan yang ditulis pengguna tidak terhindarkan dapat ambigu atau kurang lengkap (Mu dkk., 2024). Namun, LLM jarang meminta klarifikasi dan langsung membuat program yang dapat menyimpang dari kebutuhan pengguna (Mu dkk., 2024). Model yang bekerja sebagai agen juga masih sulit membedakan instruksi yang lengkap dari instruksi yang kurang lengkap (Vijayvargiya dkk., 2026). Pada vibe coding, pengembang terus memberikan arahan baru kepada AI setelah melihat hasil sebelumnya. Cara kerja seperti ini membuat pengembang sulit memastikan apakah kode yang dihasilkan masih sesuai dengan kebutuhan awal (Meske dkk., 2025).
+
+Masalah tersebut dapat dikurangi dengan memberikan spesifikasi yang jelas kepada AI sebelum kode dibuat. Feng dkk. (2026) menemukan bahwa kode yang dibuat AI dengan bantuan rancangan sistem lebih banyak lulus pengujian daripada kode yang dibuat hanya dari penjelasan biasa. Cara kerja seperti ini dikenal dengan istilah Spec-Driven Development (SDD). Dalam SDD, pengembang menulis spesifikasi terlebih dahulu, lalu AI membuat kode berdasarkan spesifikasi tersebut (Martinelli, 2026). Berdasarkan penelitian tersebut, kode buatan AI memang belum tentu benar, tetapi spesifikasi yang disusun sebelum implementasi dapat membantu AI menghasilkan kode yang lebih banyak lulus pengujian. Agar dapat diikuti AI, spesifikasi perlu menjelaskan perilaku sistem tanpa ambiguitas, termasuk skenario alternatif dan kegagalannya (Martinelli, 2026). Setiap kebutuhan juga perlu diberi ID tetap agar dapat ditelusuri sampai ke kode dan pengujian (Martinelli, 2026).
+
+Spesifikasi tersebut dapat disusun dengan beberapa pendekatan. GitHub Spec Kit secara bawaan menuliskan kebutuhan sebagai user story (Delimarsky & Riem, 2026). Sebaliknya, AI Unified Process memakai teks use case karena user story hanya menyatakan maksud pengguna, bukan perilaku sistem (Martinelli, 2026). Pendekatan lain melengkapi teks dengan model perangkat lunak, misalnya domain model pada structured spec-driven engineering (SSDE) dan class diagram UML (Cheon, 2025; Feng dkk., 2026). Namun, pendekatan-pendekatan tersebut tidak memuat langkah perantara yang memetakan setiap langkah use case ke objek dan kelas yang menjalankannya. ICONIX Process memiliki langkah tersebut melalui robustness diagram dan sequence diagram yang menghubungkan teks use case dengan domain model dan class diagram (Rosenberg & Stephens, 2007). Rosenberg dan Stephens (2007) juga mencatat bahwa pemrogram sering menerima kebutuhan yang samar dan ambigu sehingga ICONIX memaksa teks use case menjadi pernyataan perilaku sistem yang konkret dan spesifik melalui robustness analysis. Setiap kebutuhan kemudian dapat ditelusuri dari use case sampai ke kode dan pengujian (Rosenberg & Stephens, 2007). Dengan demikian, ICONIX Process berperan sebagai metode perancangan yang menghasilkan spesifikasi, sedangkan SDD menjadi cara spesifikasi tersebut diberikan kepada AI Coding Agent dan diperiksa kembali.
+
+Namun, penelitian Feng dkk. (2026) masih memiliki keterbatasan. Dalam penelitian tersebut, AI hanya diminta membuat kode satu kali tanpa kesempatan untuk memperbaikinya. AI juga hanya mengisi sebagian kode pada aplikasi yang sudah ada, bukan membuat aplikasi dari awal. Feng dkk. (2026) sendiri menyarankan agar penelitian berikutnya menggunakan AI Coding Agent seperti Claude Code yang dapat memperbaiki kodenya secara berulang. Penelitian Ehsani dkk. (2026) juga memiliki keterbatasan. Penelitian tersebut hanya mencatat penyebab penolakan kode dan tidak memeriksa apakah kesalahan itu terjadi karena rancangan yang diberikan kepada AI kurang jelas. Penelitian yang memakai UML sebagai masukan pembuatan kode, seperti Antal dkk. (2024) dan Cheon (2025), juga hanya menggunakan class diagram. Penelitian LLM pada model-driven engineering pun jarang memakai model sebagai masukan pembuatan kode (Zhang dkk., 2027). Sementara itu, penelitian yang menggunakan ICONIX Process masih memakai artefaknya sebagai dasar pembangunan sistem tanpa membahas peran AI pada tahap implementasi (Akbar dkk., 2026; Kamte dkk., 2024).
+
+Dengan demikian, penerapan artefak ICONIX sebagai spesifikasi bagi AI Coding Agent yang membangun aplikasi dari awal dan memperbaikinya secara berulang masih jarang dibahas. Hal ini perlu dikaji karena Martinelli (2026) menganggap bahasa pemodelan berat seperti UML tidak lagi diperlukan bagi AI, tetapi anggapan tersebut berasal dari pengalaman praktisi dan belum diuji secara empiris. Oleh karena itu, penelitian ini merancang dan membangun aplikasi pelaporan layanan operasional FSM UNDIP menggunakan ICONIX Process dan pendekatan SDD dengan integrasi n8n. Artefak ICONIX tersebut disusun sebagai spesifikasi yang diberikan kepada AI Coding Agent melalui GitHub Spec Kit, kemudian aplikasi yang dihasilkan diuji dengan black-box testing berdasarkan skenario use case. Penelitian ini diharapkan menghasilkan aplikasi pelaporan yang sesuai dengan kebutuhan FSM UNDIP sekaligus menunjukkan cara menerapkan artefak ICONIX sebagai spesifikasi bagi AI Coding Agent dalam SDD.
+
+### 1.2 Rumusan Masalah
+
+Berdasarkan latar belakang tersebut, FSM UNDIP membutuhkan aplikasi pelaporan baru yang dirancang dengan ICONIX Process dan dibangun dengan pendekatan SDD. Rumusan masalah penelitian ini adalah sebagai berikut:
+
+- Bagaimana rancang bangun aplikasi pelaporan layanan operasional FSM UNDIP berbasis Progressive Web App menggunakan ICONIX Process dan pendekatan Spec-Driven Development dengan integrasi n8n?
+- Bagaimana hasil pengujian aplikasi yang dibangun menggunakan black-box testing terhadap skenario use case dan kebutuhan fungsional, termasuk fungsi yang terhubung dengan n8n?
+
+### 1.3 Tujuan Penelitian
+
+Tujuan penelitian ini disusun berdasarkan rumusan masalah, yaitu:
+
+- Merancang dan membangun aplikasi pelaporan layanan operasional FSM UNDIP berbasis Progressive Web App menggunakan ICONIX Process dan pendekatan Spec-Driven Development dengan integrasi n8n.
+- Menguji aplikasi yang dibangun menggunakan black-box testing berdasarkan skenario use case dan kebutuhan fungsional, termasuk fungsi yang terhubung dengan n8n.
+
+### 1.4 Manfaat Penelitian
+
+Penelitian ini hanya mengkaji satu kasus sehingga hasilnya tidak dimaksudkan untuk digeneralisasi. Meskipun demikian, hasil penelitian ini tetap dapat dimanfaatkan oleh pihak yang menghadapi kondisi serupa, yaitu:
+
+- Bagi pengembang yang menggunakan AI Coding Agent, hasil penelitian ini dapat menjadi contoh penerapan artefak ICONIX Process sebagai spesifikasi dalam pendekatan SDD dengan bantuan GitHub Spec Kit.
+- Bagi pengelola layanan operasional FSM UNDIP, aplikasi yang dihasilkan dapat diuji coba sebagai pengganti aplikasi pelaporan yang ada, sedangkan hasil pengujian dapat menjadi dasar untuk menilai kesiapannya dan menentukan kebutuhan yang perlu dilengkapi.
+
+### 1.5 Ruang Lingkup Penelitian
+
+Ruang lingkup penelitian ini adalah sebagai berikut:
+
+- Objek penelitian adalah rancang bangun aplikasi pelaporan layanan operasional FSM UNDIP berbasis PWA yang dibangun dari awal dan terintegrasi dengan n8n. Cakupannya adalah sembilan use case inti dari permintaan layanan ad-hoc, laporan pekerjaan mandiri, dan tugas rutin terjadwal beserta klasifikasi tiket berbantuan AI. Fitur pendukung disiapkan sebagai data awal. Integrasi n8n dirancang pada arsitektur sistem dan diuji dari sisi aplikasi, sedangkan alur kerja n8n dikonfigurasi secara manual tanpa ICONIX Process.
+- AI Coding Agent (Claude Code) hanya digunakan pada tahap implementation untuk membuat kode aplikasi PWA berdasarkan spesifikasi yang disusun dari artefak ICONIX melalui GitHub Spec Kit.
+- Evaluasi aplikasi hanya dilakukan dengan black-box testing terhadap skenario utama dan skenario alternatif setiap use case inti, tanpa mengevaluasi akurasi klasifikasi tiket berbantuan AI.
+- Penelitian ini tidak membandingkan pengembangan berbantuan AI dengan pengembangan manual. Oleh karena itu, temuannya hanya berlaku pada kasus yang dikaji dan tidak digeneralisasi untuk jenis sistem, tim pengembang, atau AI Coding Agent lain.
+
+### 1.6 Sistematika Penulisan
+
+Sistematika penulisan berikut menunjukkan peran setiap bab dalam membangun jawaban atas rumusan masalah:
+
+BAB I PENDAHULUAN
+
+Bab ini menjelaskan konteks masalah dan pengetahuan yang belum diketahui sebagai dasar rumusan masalah. Bab ini juga menetapkan tujuan, manfaat, dan ruang lingkup yang membatasi jawaban penelitian.
+
+BAB II TINJAUAN PUSTAKA
+
+Bab ini memetakan penelitian terdahulu untuk menunjukkan posisi penelitian ini. Bab ini juga menyajikan dasar teori yang menjadi acuan metodologi pada Bab III, mulai dari layanan berbasis tiket, pemodelan proses bisnis, dan ICONIX Process sampai AI Coding Agent dan pengujian perangkat lunak.
+
+BAB III METODOLOGI PENELITIAN
+
+Bab ini menjelaskan rancang bangun aplikasi yang diawali dengan analisis proses bisnis as-is dan to-be, lalu dilanjutkan dengan ICONIX Process dan SDD. Tahapan tersebut mencakup perancangan integrasi n8n, penyusunan artefak sebagai spesifikasi bagi AI Coding Agent melalui GitHub Spec Kit, serta pengujian aplikasi dengan black-box testing.
+
+BAB IV HASIL DAN PEMBAHASAN
+
+Bab ini menyajikan hasil rancang bangun pada setiap tahapan Bab III, yaitu model proses bisnis as-is dan to-be, artefak ICONIX, arsitektur dan integrasi n8n, spesifikasi Spec Kit, aplikasi yang dihasilkan, serta hasil black-box testing. Hasil tersebut kemudian dibahas untuk menjawab setiap rumusan masalah.
+
+BAB V PENUTUP
+
+Bab ini menarik kesimpulan atas setiap rumusan masalah berdasarkan pembahasan pada Bab IV. Bab ini juga memberikan saran untuk pengembangan sistem dan penelitian selanjutnya.
+
+## BAB II TINJAUAN PUSTAKA
+
+Bab ini menjelaskan penelitian terdahulu dan dasar teori penelitian ini. Penelitian terdahulu dibahas untuk menunjukkan posisi penelitian ini di antara penelitian lain. Penelitian terdahulu tersebut dikelompokkan berdasarkan topiknya, lalu dibandingkan dengan penelitian ini dalam bentuk tabel. Dasar teori mencakup layanan berbasis tiket, rekayasa perangkat lunak, pemodelan proses bisnis, ICONIX Process, Unified Modeling Language (UML), Large Language Model, AI Coding Agent, Spec-Driven Development, Progressive Web App, otomatisasi alur kerja dengan n8n, teknologi pengembangan sistem, RESTful API, dan pengujian perangkat lunak. Setiap teori dibahas sesuai perannya dalam tahapan penelitian yang dijelaskan pada Bab III.
+
+### 2.1 Penelitian Terdahulu
+
+Penelitian terdahulu dibagi menjadi tiga kelompok, yaitu penerapan ICONIX Process pada sistem informasi, penggunaan agen berbasis LLM, dan penggunaan spesifikasi terstruktur untuk membuat kode. Kajian terhadap 395 artikel menunjukkan bahwa penelitian LLM di bidang rekayasa perangkat lunak paling banyak membahas pembuatan kode (code generation), sedangkan rekayasa kebutuhan dan perancangan hanya dibahas oleh 3,9% dan 0,92% studi (Hou dkk., 2024). Penelitian LLM pada model-driven engineering juga masih didominasi pembuatan model, yaitu 62 dari 86 studi, sedangkan pembuatan kode dari model hanya dibahas oleh lima studi (Zhang dkk., 2027). Ketiga kelompok tersebut dipilih karena masing-masing berkaitan dengan metode pengembangan, peran AI Coding Agent, dan bentuk spesifikasi yang digunakan dalam penelitian ini. Perbandingan penelitian terdahulu dengan penelitian ini dapat dilihat pada Tabel 2.1.
+
+Tabel 2.1  Perbandingan Penelitian Terdahulu dengan Penelitian Ini
+
+| No | Penulis | Objek/Konteks | Spesifikasi atau Proses | Peran AI/LLM | Aspek yang Dievaluasi dan Hasil |
+|---|---|---|---|---|---|
+| 1 | Akbar dkk. (2026) | Platform manajemen proyek berbasis web untuk departemen desain rekayasa di perusahaan manufaktur | ICONIX Process; Laravel dan MySQL | Tidak ada | Penerimaan pengguna: 86,3% berdasarkan User Acceptance Test dengan kuesioner Likert |
+| 2 | Kamte dkk. (2024) | Platform diagnosis mandiri kinerja CSR untuk UKM manufaktur | UML dan ICONIX (use case, robustness, sequence, dan class diagram); Dart/Flutter, Django, MySQL | Tidak ada (AI hanya disebut sebagai saran pengembangan) | Evaluasi pengguna: tidak dilaporkan; platform berhasil dimodelkan |
+| 3 | Feng dkk. (2026) | Logika bisnis pada 3 sistem berpola Model-View-Controller yang sudah ada | Bahasa alami, Gherkin, domain model, dan signature model (SSDE) | Lima LLM menghasilkan kode controller secara 0-shot tanpa umpan balik | Test pass rate kode: lebih tinggi dengan spesifikasi terstruktur; signature model 7,82% lebih tinggi daripada domain model; kesalahan terbanyak berupa pemanggilan API yang tidak ada (49,0%) |
+| 4 | Cheon (2025) | Aplikasi Sudoku berbasis Dart/Flutter yang modulnya sebelumnya ditulis secara manual | Class diagram UML (PlantUML) dan batasan OCL | ChatGPT-4o menghasilkan kode secara bertahap melalui percakapan | Kesesuaian kode dengan spesifikasi (kualitatif): kode mengikuti spesifikasi struktur dan perilaku dengan cermat; beberapa bagian harus diminta secara eksplisit; konteks percakapan tidak tersimpan sehingga perlu pembaruan manual; hanya satu domain dan satu jenis diagram |
+| 5 | Ehsani dkk. (2026) | 33.596 pull request dari lima AI Coding Agent di GitHub | Alur kerja nyata dengan continuous integration dan code review | Codex, Copilot, Devin, Cursor, dan Claude Code membuat pull request | Penerimaan dan penyebab penolakan pull request: 71,48% diterima; yang ditolak cenderung berukuran lebih besar dan lebih sering gagal CI; penolakan antara lain disebabkan oleh pengujian yang gagal, implementasi yang salah atau belum lengkap, dan agen yang tidak mengikuti instruksi peninjau |
+| 6 | Penelitian ini | Sistem pelaporan layanan operasional FSM UNDIP berbasis PWA yang dibangun dari awal | ICONIX Process; use case, robustness diagram, sequence diagram, dan class diagram sebagai spesifikasi | AI Coding Agent (Claude Code) digunakan secara berulang pada tahap implementasi | Rancang bangun aplikasi dengan artefak ICONIX sebagai spesifikasi SDD melalui GitHub Spec Kit, lalu diuji dengan black-box testing; hasilnya disajikan pada Bab IV |
+
+Pada kelompok penerapan ICONIX Process, Akbar dkk. (2026) membangun platform manajemen proyek berbasis web untuk departemen desain rekayasa sebuah perusahaan manufaktur dengan ICONIX Process, Laravel, dan MySQL. Tingkat penerimaan penggunanya mencapai 86,3% berdasarkan User Acceptance Test. ICONIX dipilih dalam penelitian tersebut karena menekankan keterlacakan dan kejelasan desain, serta menjadi jalan tengah antara metodologi berat seperti Rational Unified Process (RUP) dan pendekatan agile yang berpusat pada kode (Akbar dkk., 2026). Kamte dkk. (2024) memodelkan platform diagnosis mandiri kinerja tanggung jawab sosial perusahaan (CSR) dengan UML dan ICONIX melalui use case diagram, robustness diagram, sequence diagram, dan class diagram, tetapi tidak melaporkan evaluasi oleh pengguna. Kedua penelitian ini menunjukkan bahwa artefak ICONIX masih dipakai sebagai dasar pembangunan sistem informasi, tetapi belum membahas peran AI pada tahap implementasinya.
+
+Pada kelompok agen berbasis LLM, Ehsani dkk. (2026) menganalisis 33.596 usulan perubahan kode (pull request) dari lima AI Coding Agent, yaitu Codex, Copilot, Devin, Cursor, dan Claude Code, pada repositori GitHub. Sebanyak 71,48% pull request tersebut diterima. Pull request yang ditolak cenderung lebih besar dan lebih sering gagal pada continuous integration (CI). Dari 600 pull request yang ditolak, sebagian ditolak karena pengujian gagal, implementasi salah atau belum lengkap, dan agen tidak mengikuti instruksi peninjau meskipun sudah berulang kali diberi umpan balik. Temuan tersebut menunjukkan bahwa agen dapat menyelesaikan sebagian tugas, tetapi hasilnya tetap harus diuji, ditinjau, dan diperbaiki oleh pengembang, terutama pada perubahan kode yang besar. Namun, penelitian tersebut hanya mengelompokkan penyebab penolakan dan tidak menelusuri apakah kesalahan agen berasal dari spesifikasi yang kurang jelas.
+
+Pada kelompok spesifikasi terstruktur, Feng dkk. (2026) mengusulkan structured spec-driven engineering (SSDE) dan menguji lima LLM untuk membuat logika bisnis pada tiga sistem berpola Model-View-Controller (MVC). MVC adalah pola desain yang memisahkan data dan logika bisnis (model), tampilan (view), serta pengatur perintah (controller) (Mozilla, t.t.-a). Dalam penelitian tersebut, LLM membuat bagian controller secara 0-shot tanpa umpan balik (Feng dkk., 2026). 0-shot berarti kode dibuat hanya dari deskripsi bahasa alami tanpa contoh (Jiang dkk., 2026). Hasilnya, kode dengan tambahan spesifikasi terstruktur memiliki test pass rate, yaitu tingkat kelulusan rangkaian pengujian, yang lebih tinggi daripada kode yang hanya dibuat dari spesifikasi bahasa alami (Feng dkk., 2026). Penggunaan signature model, yaitu daftar kelas dan fungsi (API) pada lapisan model, menghasilkan test pass rate 7,82% lebih tinggi daripada domain model. Sebaliknya, kombinasi Gherkin dengan model rata-rata 6,8% lebih rendah daripada kombinasi bahasa alami dengan model. Gherkin adalah bahasa terstruktur yang mudah dibaca orang awam untuk menjelaskan perilaku sistem melalui contoh yang dapat diperiksa. Kesalahan yang paling sering muncul adalah pemanggilan API yang tidak ada, sebesar 49,0% (Feng dkk., 2026).
+
+Berbeda dengan pembuatan kode sekali jalan pada Feng dkk. (2026), Cheon (2025) memberikan class diagram UML dalam notasi PlantUML beserta batasan Object Constraint Language (OCL) kepada ChatGPT-4o. OCL melengkapi UML dengan menyatakan batasan dan perilaku yang tidak dapat digambarkan model grafis (Cheon, 2025). ChatGPT-4o kemudian diminta membuat kode Dart/Flutter secara bertahap untuk menggantikan modul aplikasi Sudoku yang sebelumnya ditulis manual. Kodenya dilaporkan mengikuti spesifikasi struktur dan perilaku dengan cermat, tetapi teknik penyelesaian Sudoku yang kompleks harus diminta secara eksplisit. Konteks percakapan juga tidak tersimpan antarinteraksi sehingga konsistensi harus dijaga dengan pembaruan manual. Selain itu, penelitian ini hanya mencakup satu domain dan satu jenis diagram, yaitu class diagram beserta OCL. Temuan serupa dilaporkan Antal dkk. (2024), yaitu GPT-4-Vision mampu membuat kode untuk rata-rata 88% elemen dari 18 class diagram. Namun, kinerjanya lebih lemah pada diagram yang memuat banyak kelas (Antal dkk., 2024).
+
+Peran AI pada ketiga kelompok penelitian tersebut berbeda, mulai dari tidak digunakan pada penerapan ICONIX, menjadi pembuat kode dari spesifikasi, hingga agen yang mengubah repositori secara mandiri. Dari penelitian-penelitian tersebut, ada tiga hal yang dapat disimpulkan. Pertama, artefak ICONIX masih dipakai sebagai dasar pembangunan sistem informasi, tetapi perannya sebagai spesifikasi bagi AI belum diteliti. Kedua, kode buatan AI Coding Agent masih dapat gagal diuji, salah, belum lengkap, atau tidak mengikuti instruksi peninjau, terutama pada perubahan kode yang besar. Oleh karena itu, kode tersebut tetap harus diuji, ditinjau, dan diperbaiki oleh pengembang. Ketiga, spesifikasi terstruktur tampak membantu LLM menghasilkan kode yang sesuai spesifikasi. Namun, buktinya berasal dari pembuatan kode 0-shot tanpa umpan balik pada sistem yang sudah ada atau dari satu aplikasi dengan satu jenis diagram. Dari kelima penelitian tersebut, belum ada yang menguji penggunaan AI Coding Agent secara berulang untuk membangun aplikasi dari awal dengan rangkaian artefak berbasis use case.
+
+Berdasarkan uraian tersebut, penelitian ini berada di antara kelompok penerapan ICONIX Process dan kelompok spesifikasi terstruktur untuk LLM. Berbeda dengan penelitian ICONIX sebelumnya, penelitian ini menjadikan use case, robustness diagram, sequence diagram, dan class diagram sebagai spesifikasi bagi AI Coding Agent. Berbeda pula dengan Feng dkk. (2026) dan Cheon (2025), AI Coding Agent digunakan secara berulang untuk membangun aplikasi dari awal melalui GitHub Spec Kit. Aplikasi yang dihasilkan kemudian diuji dengan black-box testing berdasarkan skenario utama dan skenario alternatif setiap use case. Klasifikasi tiket berbantuan AI tidak dibahas sebagai penelitian terdahulu karena hanya berperan sebagai pendukung keputusan, sedangkan dasar teorinya dijelaskan pada Subbab 2.2.1.
+
+### 2.2 Dasar Teori
+
+Subbab ini menjelaskan teori yang digunakan, diawali dengan sistem manajemen layanan berbasis tiket sebagai objek penelitian. Berikutnya dibahas rekayasa perangkat lunak, pemodelan proses bisnis, ICONIX Process, diagram UML, Large Language Model, AI Coding Agent dan vibe coding, serta Spec-Driven Development. Bagian akhir membahas Progressive Web App, otomatisasi alur kerja dengan n8n dan OpenRouter, teknologi pengembangan sistem, RESTful API, dan pengujian perangkat lunak. Teori-teori tersebut menjadi acuan dalam menyusun tahapan penelitian pada Bab III. Setiap subbab juga menjelaskan penerapan teori tersebut dalam penelitian ini.
+
+#### 2.2.1 Sistem Manajemen Layanan Berbasis Tiket
+
+Pada sistem manajemen layanan TI, setiap permintaan pengguna dicatat sebagai tiket, dikelompokkan berdasarkan jenis permintaan, lalu diteruskan kepada tim yang bertanggung jawab (Razma & Jurkus, 2026). Penentuan jenis permintaan dan tim tujuan dapat dilakukan secara manual oleh petugas (Razma & Jurkus, 2026). Langkah ini termasuk yang paling memakan waktu dan rawan salah sehingga menjadi sasaran otomatisasi (Razma & Jurkus, 2026). Pada service desk, petugas juga dapat menentukan kategori tiket berdasarkan pengalaman pribadi dan daftar kata kunci yang disusun manual (Paket dkk., 2024). Namun, ketergantungan pada pengalaman petugas dan sulitnya memperbarui daftar kata kunci membuat kesalahan klasifikasi makin sering terjadi (Paket dkk., 2024).
+
+Penentuan kategori tiket merupakan masalah klasifikasi multikelas, yaitu setiap tiket dimasukkan ke salah satu dari beberapa kelas yang sudah ditentukan (Paket dkk., 2024). Akurasinya cenderung turun ketika jumlah kelas bertambah. Akurasi 80–90% masih dapat dicapai sampai sekitar 25 kelas, tetapi turun tajam jika jumlah kelas lebih dari 70 (Paket dkk., 2024). Oleh karena itu, klasifikasi dapat dirancang sebagai pendukung keputusan, yaitu sistem mengusulkan kategori, lalu petugas menyetujui atau mengubahnya sehingga kesalahan tetap dapat diperbaiki (Razma & Jurkus, 2026). Prinsip ini menjadi dasar fitur klasifikasi tiket berbantuan AI pada sistem yang dibangun.
+
+#### 2.2.2 Rekayasa Perangkat Lunak
+
+Rekayasa perangkat lunak adalah disiplin yang berfokus pada pengembangan, implementasi, dan pemeliharaan sistem perangkat lunak (Hou dkk., 2024). Disiplin ini ikut berkembang seiring kemajuan Large Language Model (LLM) yang kini digunakan pada berbagai aktivitasnya (Hou dkk., 2024). Meskipun demikian, LLM jarang memberikan hasil terbaik jika digunakan terpisah, tetapi dapat sangat efektif jika menjadi bagian dari keseluruhan proses rekayasa perangkat lunak (Fan dkk., 2023). Oleh karena itu, perpaduan teknik rekayasa perangkat lunak yang sudah ada dengan LLM dinilai penting (Fan dkk., 2023). Dalam penelitian ini, LLM dalam bentuk AI Coding Agent ditempatkan pada tahap implementation ICONIX Process, sedangkan analisis dan perancangan tetap dilakukan oleh pengembang.
+
+#### 2.2.3 Pemodelan Proses Bisnis
+
+Proses bisnis adalah rangkaian aktivitas dalam suatu organisasi yang bertujuan menyelesaikan pekerjaan (Object Management Group [OMG], 2014). Analisis proses bisnis digunakan oleh pengembang dan pemangku kepentingan untuk menetapkan dan menyepakati kebutuhan perangkat lunak (Lieharyani dkk., 2024). Kebutuhan tersebut kemudian menjadi dasar perancangan, implementasi, dan pengujian perangkat lunak (Lieharyani dkk., 2024). Pemodelan proses bisnis diawali dengan memetakan proses yang sedang berjalan, yang disebut model as-is (Bashir & Nuryana, 2024). Model as-is menjadi acuan untuk merancang ulang proses menjadi model to-be (Bashir & Nuryana, 2024). Perancangan ulang proses adalah perubahan proses bisnis yang disengaja, dan penyusunan rancangan proses to-be merupakan bagian penting dari upaya tersebut (Gross dkk., 2021).
+
+Salah satu notasi untuk memodelkan proses bisnis adalah Business Process Model and Notation (BPMN). Tujuan utama BPMN adalah menyediakan notasi yang mudah dipahami semua pengguna bisnis, mulai dari analis bisnis dan pengembang teknis sampai pengelola proses (OMG, 2014). Pool mewakili satu partisipan dalam kolaborasi, sedangkan lane adalah partisi di dalam pool untuk mengatur dan mengelompokkan aktivitas (OMG, 2014). Task adalah aktivitas atomik di dalam proses, sedangkan start event menandai titik awal proses (OMG, 2014). Gateway keputusan menandai titik ketika alur dapat mengambil salah satu dari beberapa jalur alternatif (OMG, 2014). Sequence flow menunjukkan urutan pelaksanaan aktivitas, sedangkan message flow menunjukkan aliran pesan antara dua partisipan (OMG, 2014).
+
+Lieharyani dkk. (2024) membandingkan beberapa model proses bisnis untuk mendukung analisis dan penetapan kebutuhan. BPMN dinilai paling sesuai karena alurnya berurutan, mudah dipahami pemangku kepentingan, dan memungkinkan validasi terhadap model proses yang dibuat (Lieharyani dkk., 2024). Dalam penelitian ini, BPMN digunakan untuk memodelkan proses as-is dan to-be layanan operasional FSM UNDIP. Model to-be menjadi masukan bagi penyusunan functional requirements dan use case pada tahap requirements ICONIX Process (Subbab 2.2.4.1). Model to-be tersebut juga menunjukkan aktivitas yang dijalankan aplikasi baru dan aktivitas yang diotomatisasi dengan n8n (Subbab 3.2.1).
+
+#### 2.2.4 ICONIX Process
+
+ICONIX Process adalah pendekatan pengembangan perangkat lunak yang ringkas dan berfokus pada bagian antara use case dan kode (Rosenberg & Stephens, 2007). Pendekatan ini memakai sebagian diagram inti UML untuk merancang perangkat lunak berorientasi objek mulai dari use case (Rosenberg & Stephens, 2007). Penekanannya berada pada tahap ketika sebagian use case sudah tersedia dan pengembang perlu melakukan analisis serta perancangan yang baik (Rosenberg & Stephens, 2007). ICONIX Process menyediakan langkah-langkah minimal yang dapat diulang dan disesuaikan, misalnya dengan menambahkan state diagram atau activity diagram jika dibutuhkan (Rosenberg & Stephens, 2007). Gambaran umum ICONIX Process beserta artefak yang dihasilkannya dapat dilihat pada Gambar 2.1.
+
+[Gambar]
+Gambar 2.1  Alur Kerja ICONIX Process (Rosenberg & Stephens, 2007)
+
+ICONIX Process dibagi menjadi dua alur kerja, yaitu alur kerja dinamis (dynamic) dan alur kerja statis (static) (Rosenberg & Stephens, 2007). Alur kerja dinamis berlandaskan use case dan menggambarkan perilaku sistem, sedangkan alur kerja statis berlandaskan domain model dan menggambarkan struktur sistem (Rosenberg & Stephens, 2007). Pada alur kerja dinamis, prototipe antarmuka (GUI storyboard) melengkapi penyusunan use case. Teks use case kemudian dianalisis dan ditulis ulang melalui robustness diagram, lalu dirinci menjadi sequence diagram (Rosenberg & Stephens, 2007). Pada alur kerja statis, domain model diperbarui selama robustness analysis, lalu berkembang menjadi class model ketika operasi ditambahkan dari sequence diagram (Rosenberg & Stephens, 2007). Kedua alur kerja tersebut menghasilkan kode beserta unit test dan rencana pengujian (test plans), dan kasus uji dapat diturunkan langsung dari setiap controller pada robustness diagram (Rosenberg & Stephens, 2007). Dalam penelitian ini, rencana pengujian tersebut diwujudkan sebagai skenario black-box testing yang disusun dari skenario utama dan skenario alternatif setiap use case (Subbab 2.2.13).
+
+ICONIX Process terdiri atas empat tahap, yaitu requirements, analysis/preliminary design, detailed design, dan implementation, dengan milestone peninjauan di setiap peralihan tahap seperti pada Gambar 2.2. Di dalam setiap tahap, aktivitas dapat berjalan secara paralel dan saling tumpang tindih sampai hasilnya siap (Rosenberg & Stephens, 2007). Proses ini sangat iteratif karena satu putaran dapat dilakukan untuk sekelompok kecil use case sampai menghasilkan kode sumber dan unit test (Rosenberg & Stephens, 2007). Sifat iteratif ini membuat ICONIX Process sesuai untuk proyek agile yang membutuhkan umpan balik cepat terhadap kebutuhan, desain, dan estimasi (Rosenberg & Stephens, 2007). Robustness analysis berperan sebagai penghubung antara tahap analisis dan tahap desain (Rosenberg & Stephens, 2007).
+
+[Gambar]
+Gambar 2.2  Tahapan ICONIX Process (disusun berdasarkan uraian Rosenberg & Stephens, 2007)
+
+Ada empat alasan ICONIX Process dipilih dalam penelitian ini. Pertama, ICONIX berpusat pada use case (use case driven) dan menekankan keterlacakan, yaitu setiap kebutuhan dipetakan ke use case dan kelas, lalu ditelusuri sampai ke implementasi dan pengujian (Rosenberg & Stephens, 2007). Kedua, artefak ICONIX, seperti domain model, use case, robustness diagram, dan sequence diagram, ditulis secara jelas sehingga dapat dijadikan spesifikasi bagi AI Coding Agent. Ketiga, ICONIX memaksa teks use case yang samar dan ambigu menjadi pernyataan perilaku sistem yang konkret dan spesifik melalui robustness analysis (Rosenberg & Stephens, 2007). Hal ini relevan karena kebutuhan yang ambigu dapat membuat LLM menghasilkan kode yang menyimpang (Mu dkk., 2024). Keempat, controller pada robustness diagram dapat dipetakan langsung menjadi controller pada aplikasi web berpola Model-View-Controller (MVC) (Rosenberg & Stephens, 2007). Hal ini penting karena pengembangan yang hanya mengandalkan percakapan dengan AI dapat membuat maksud pengembang sulit ditelusuri sampai ke hasil implementasinya (Meske dkk., 2025).
+
+##### 2.2.4.1 Requirements
+
+Tahap requirements diawali dengan menyusun functional requirements, yaitu kemampuan yang harus dimiliki sistem. Berikutnya, domain modeling dilakukan untuk menyusun daftar istilah proyek dalam bentuk diagram kelas sederhana agar semua pihak memahami ruang masalah dengan istilah yang sama. Behavioral requirements kemudian disusun sebagai use case draf pertama yang berisi skenario utama (basic course) dan skenario alternatif (alternate course), sebaiknya diawali dengan prototipe antarmuka (GUI storyboard). Tahap ini ditutup dengan Milestone 1: Requirements Review untuk memastikan teks use case sesuai dengan harapan pelanggan dan kebutuhan dipahami bersama oleh tim pengembang dan pemangku kepentingan (Rosenberg & Stephens, 2007). Dalam penelitian ini, kebutuhan sistem pelaporan FSM UNDIP diidentifikasi dari kondisi aplikasi saat ini dan kebutuhan pengguna. Kebutuhan tersebut mencakup permintaan layanan (tiket ad-hoc), laporan pekerjaan mandiri, tugas rutin terjadwal, verifikasi hasil pekerjaan oleh pelapor maupun atasan, serta klasifikasi tiket berbantuan AI. Domain model memuat objek utama, seperti tiket, pengguna, unit organisasi, jenis tiket, keahlian petugas, dan tugas rutin. Use case yang dihasilkan menjadi dasar semua artefak pada tahap berikutnya.
+
+##### 2.2.4.2 Analysis/Preliminary Design
+
+Analisis berfokus pada membangun sistem yang tepat, desain berfokus pada membangun sistem dengan tepat, dan preliminary design berada di antara keduanya. Pada tahap ini dilakukan robustness analysis, yaitu menggambar robustness diagram yang menunjukkan objek pada setiap langkah use case sambil menulis ulang teks use case tersebut. Robustness diagram memakai tiga jenis objek, yaitu boundary object yang biasanya berupa layar atau halaman web, entity object yang berasal dari domain model, dan controller yang menghubungkan keduanya dan biasanya berupa fungsi logis perangkat lunak. Domain model juga diperbarui selama proses ini. Tahap ini diakhiri dengan Milestone 2: Preliminary Design Review untuk memastikan robustness diagram, domain model, dan teks use case saling sesuai (Rosenberg & Stephens, 2007).
+
+Robustness diagram memiliki aturan hubungan antarobjek yang ketat seperti pada Gambar 2.3. Aktor hanya boleh berinteraksi dengan boundary object. Boundary object boleh berinteraksi dengan controller, dan controller boleh berinteraksi dengan controller lain maupun entity object. Sebaliknya, aktor tidak boleh berinteraksi langsung dengan controller atau entity object, dan boundary object tidak boleh berinteraksi langsung dengan entity object. Hubungan sesama boundary object atau sesama entity object juga harus melalui controller. Aturan ini membuat teks use case mengikuti pola kata benda–kata kerja–kata benda (noun-verb-noun) sehingga lebih mudah dikembangkan menjadi desain rinci (Rosenberg & Stephens, 2007).
+
+[Gambar]
+Gambar 2.3  Aturan Hubungan Objek pada Robustness Diagram (disusun berdasarkan uraian Rosenberg & Stephens, 2007)
+
+Selain itu, technical architecture mulai disusun pada tahap ini. Arsitektur ini menggambarkan struktur sistem dan harus dipastikan sebelum detailed design dimulai. Arsitektur umumnya terdiri atas deployment model yang menunjukkan server dan susunan jaringan, package/component model yang menunjukkan pembagian komponen, dan data model (Rosenberg & Stephens, 2007). Arsitektur sebaiknya dipilih berdasarkan kebutuhan sistem, bukan tren teknologi. Sistem luar yang perlu dihubungkan juga harus diidentifikasi, termasuk apakah sistem tetap harus berjalan ketika sistem luar tersebut tidak tersedia (Rosenberg & Stephens, 2007).
+
+ICONIX tidak menetapkan notasi baku untuk arsitektur, tetapi contoh arsitektur pada buku acuannya digambarkan dengan UML deployment diagram (Rosenberg & Stephens, 2007). Deployment diagram menunjukkan bagaimana dan di mana sistem dijalankan. Mesin fisik digambarkan sebagai node, sedangkan file, skrip, tabel basis data, dan halaman web digambarkan sebagai artifact (Rosenberg & Stephens, 2007). Dalam penelitian ini, deployment diagram menggambarkan hubungan aplikasi PWA, n8n, dan layanan luar. Teknologi sistem pelaporan FSM UNDIP dijelaskan pada Subbab 2.2.10 dan 2.2.11.
+
+##### 2.2.4.3 Detailed Design
+
+Tahap detailed design berfokus pada cara membangun sistem dengan tepat, termasuk efisiensi waktu eksekusi, beban jaringan, penggunaan memori, dan penggunaan ulang kode. Jika preliminary design berfokus pada penemuan kelas (object discovery), detailed design berfokus pada pembagian perilaku (behavior allocation) ke kelas-kelas tersebut melalui satu sequence diagram untuk setiap use case. Domain model kemudian diperbarui dengan operasi baru hingga menjadi class diagram, lalu model statis tersebut dirapikan. Tahap ini ditutup dengan Milestone 3: Critical Design Review oleh tim teknis untuk memastikan rancangan rinci sesuai dengan kebutuhan, meninjau kualitas desain, dan memeriksa kesinambungan pesan pada sequence diagram (Rosenberg & Stephens, 2007). Pada sistem pelaporan FSM UNDIP, sequence diagram menggambarkan interaksi pengguna, antarmuka PWA, logika aplikasi, basis data, dan n8n pada setiap use case. n8n digambarkan sebagai sistem luar karena alur kerjanya tidak dirancang dengan ICONIX Process. Misalnya, sequence diagram pembuatan permintaan layanan menunjukkan urutan pesan dari pelapor mengisi deskripsi tiket sampai aplikasi menyimpan tiket dan meminta usulan klasifikasi ke n8n. Class diagram yang dihasilkan menjadi acuan struktur kode, sedangkan kelas entitasnya menjadi dasar skema basis data. Kedua artefak ini menjadi bagian utama spesifikasi bagi AI Coding Agent.
+
+##### 2.2.4.4 Implementation
+
+Tahap implementation mencakup penulisan kode dan unit test, pengujian integrasi, pengujian skenario berdasarkan use case, serta Code Review and Model Update. Kode sebaiknya dibuat langsung dari desain, dan pembuatan kode dari diagram desain dianjurkan untuk diotomatisasi jika memungkinkan (Rosenberg & Stephens, 2007). Jika saat menulis kode ditemukan kesalahan desain, desain harus diperbaiki dan langkah sebelumnya ditinjau ulang agar desain dan kode tetap sejalan (Rosenberg & Stephens, 2007). Desain juga menjadi dasar penentuan bagian yang diuji, yaitu satu atau lebih pengujian untuk setiap controller pada robustness diagram (Rosenberg & Stephens, 2007). Pada milestone Code Review and Model Update, kode ditinjau dengan menelusuri setiap use case dan controller sampai ke kode, lalu kode disesuaikan dengan desain atau desain diperbarui mengikuti kode (Rosenberg & Stephens, 2007). Penelusuran ini dapat menemukan fungsi yang tercantum pada use case tetapi belum ada di dalam kode (Rosenberg & Stephens, 2007). Dalam penelitian ini, tahap implementation adalah tahap ketika AI Coding Agent menghasilkan kode berdasarkan artefak ICONIX dan pengembang meninjau hasilnya. Setiap penyimpangan hasil implementasi terhadap skenario use case dan setiap intervensi pengembang dicatat sebagai data penelitian.
+
+#### 2.2.5 Unified Modeling Language (UML)
+
+Diagram UML yang digunakan dalam penelitian ini mengikuti diagram inti pada ICONIX Process (Subbab 2.2.4), yaitu domain model, use case diagram, robustness diagram, sequence diagram, dan class diagram. Diagram tersebut merupakan bagian inti UML yang minimal tetapi cukup untuk merancang perangkat lunak dari use case sampai menjadi kode (Rosenberg & Stephens, 2007). Domain model dan class diagram menggambarkan struktur sistem, sedangkan use case diagram, robustness diagram, dan sequence diagram menggambarkan perilaku sistem. Robustness diagram menggambarkan rancangan konseptual, sedangkan sequence diagram menggambarkan rancangan nyata yang menjadi dasar penulisan kode (Rosenberg & Stephens, 2007). Setiap diagram tersebut dijelaskan pada subbab berikut.
+
+##### 2.2.5.1 Domain Model
+
+Domain model adalah daftar istilah (glosarium) proyek dalam bentuk diagram yang memuat istilah-istilah proyek beserta hubungannya. Dalam praktiknya, domain model berbentuk class diagram sederhana, yaitu kelas-kelas (domain object) yang dihubungkan dengan garis agregasi (has-a) dan generalisasi (is-a) (Rosenberg & Stephens, 2007). Domain model juga menentukan cakupan proyek, menjadi dasar penulisan use case, dan memberikan istilah yang sama bagi seluruh anggota tim sehingga komunikasi lebih jelas (Rosenberg & Stephens, 2007). Contoh domain model dapat dilihat pada Gambar 2.4. Pada gambar tersebut, Editorial Review dan Reader Review dihubungkan ke Book Review dengan garis bersegitiga yang menunjukkan generalisasi, sedangkan garis bertanda belah ketupat menunjukkan agregasi.
+
+[Gambar]
+Gambar 2.4  Contoh Domain Model (Rosenberg & Stephens, 2007)
+
+##### 2.2.5.2 Use Case Diagram
+
+Use case diagram menampilkan beberapa use case sekaligus sehingga memberikan gambaran umum tentang sekelompok use case yang saling berkaitan. Setiap use case digambarkan dengan oval berisi judulnya (Rosenberg & Stephens, 2007). Aktor digambarkan dengan simbol orang (stick figure) dan mewakili peran pengguna di luar sistem, baik manusia maupun sistem lain. Garis asosiasi dari aktor ke use case menunjukkan bahwa aktor tersebut menjalankan use case itu (Rosenberg & Stephens, 2007). Contoh use case diagram dapat dilihat pada Gambar 2.5.
+
+[Gambar]
+Gambar 2.5  Contoh Use Case Diagram (diadaptasi dari Rosenberg & Stephens, 2007)
+
+##### 2.2.5.3 Robustness Diagram
+
+Robustness diagram menggambarkan objek-objek yang terlibat dalam sebuah use case. Isinya harus sesuai dengan teks use case sehingga diagram ini menghubungkan teks use case dengan objek di dalam sistem (Rosenberg & Stephens, 2007). Diagram ini menjadi jembatan antara analisis, yaitu apa yang harus dikerjakan sistem, dan desain, yaitu bagaimana sistem mengerjakannya (Rosenberg & Stephens, 2007). Jenis objek dan aturan hubungan antarobjeknya telah dijelaskan pada Subbab 2.2.4.2. Contoh robustness diagram untuk use case Login dapat dilihat pada Gambar 2.6. Pada buku acuan, teks use case ditempelkan di samping diagram, tetapi pada contoh ini teks tersebut tidak ditampilkan agar diagram lebih mudah dibaca. Skenario utama dan skenario alternatif tetap digambarkan dalam satu diagram, dengan objek skenario alternatif diberi warna merah agar mudah dibedakan (Rosenberg & Stephens, 2007).
+
+[Gambar]
+Gambar 2.6  Contoh Robustness Diagram Sederhana untuk Use Case Login (diadaptasi dari Rosenberg & Stephens, 2007)
+
+##### 2.2.5.4 Sequence Diagram
+
+Sequence diagram digunakan pada tahap detailed design untuk pembagian perilaku (behavior allocation), yaitu membagi fungsi perangkat lunak ke kelas-kelas yang sudah ditemukan pada preliminary design (Rosenberg & Stephens, 2007). Seperti robustness diagram, satu sequence diagram dibuat untuk setiap use case (Rosenberg & Stephens, 2007). Kerangka awal sequence diagram dapat diturunkan dari robustness diagram, yaitu entity object dan boundary object menjadi objek pada sequence diagram (Rosenberg & Stephens, 2007). Setiap sequence diagram juga harus mencakup skenario utama dan skenario alternatif (Rosenberg & Stephens, 2007). Notasi sequence diagram dapat dilihat pada Gambar 2.7.
+
+[Gambar]
+Gambar 2.7  Notasi Sequence Diagram (Rosenberg & Stephens, 2007)
+
+Pada sequence diagram, objek-objek di bagian atas diagram berinteraksi dengan saling mengirim pesan. Garis putus-putus vertikal (lifeline) menunjukkan urutan waktu sehingga diagram dibaca dari pesan paling atas (Rosenberg & Stephens, 2007). Controller pada robustness diagram tidak digambarkan sebagai objek, tetapi diubah menjadi pesan pada boundary object dan entity object. Sebagian besar controller dapat diwujudkan sebagai satu atau lebih operasi pada kelas entity dan boundary (Rosenberg & Stephens, 2007). Setiap pesan yang digambar pada sequence diagram kemudian menjadi operasi pada kelas yang sesuai di class diagram (Rosenberg & Stephens, 2007).
+
+##### 2.2.5.5 Class Diagram
+
+Dalam ICONIX Process, class diagram yang menggambarkan struktur kelas sistem berasal dari domain model. Saat sequence diagram dibuat, operasi ditambahkan pada kelas-kelas domain model sehingga berkembang menjadi model statis atau class diagram (Rosenberg & Stephens, 2007). Setiap kali pesan digambar pada sequence diagram, class diagram juga diperiksa dan diperbarui agar model statis dan model dinamis tetap sesuai (Rosenberg & Stephens, 2007). Class diagram memperlihatkan gambaran struktur kode yang akan ditulis (Rosenberg & Stephens, 2007). Contoh class diagram dapat dilihat pada Gambar 2.8, dengan setiap kelas berisi nama kelas, atribut, dan operasi.
+
+[Gambar]
+Gambar 2.8  Contoh Class Diagram (diadaptasi dari Rosenberg & Stephens, 2007)
+
+#### 2.2.6 Large Language Model
+
+Large Language Model (LLM) adalah model kecerdasan buatan yang dilatih dengan data dalam jumlah besar dan mampu menghasilkan teks yang menyerupai tulisan manusia. LLM umumnya dibangun dengan transformer (Fan dkk., 2023). Transformer adalah arsitektur yang sepenuhnya mengandalkan mekanisme self-attention, yaitu mekanisme yang menghubungkan posisi-posisi dalam satu urutan kata untuk membentuk representasi urutan tersebut (Vaswani dkk., 2017). LLM dapat digunakan pada hampir semua aktivitas rekayasa perangkat lunak, mulai dari penulisan kode, desain, kebutuhan, perbaikan, refactoring, peningkatan kinerja, hingga dokumentasi (Fan dkk., 2023). Refactoring adalah pengubahan kode yang secara definisi tidak mengubah perilaku program (Fan dkk., 2023). Salah satu aktivitas yang berkembang pesat dan mendapat perhatian besar dari akademisi maupun industri adalah pembuatan kode (code generation), yaitu tugas menghasilkan kode sumber dari deskripsi bahasa alami (Jiang dkk., 2026).
+
+Di balik kemampuannya, LLM memiliki beberapa kelemahan. LLM dapat mengalami halusinasi, yaitu menghasilkan jawaban yang tampak benar padahal salah sehingga dibutuhkan cara untuk menyaring solusi yang tidak tepat (Fan dkk., 2023). LLM juga nondeterministik, yaitu prompt yang sama dapat menghasilkan jawaban berbeda pada waktu berbeda (Fan dkk., 2023). Jika maksud kode tidak diuraikan dengan jelas, LLM dapat menghasilkan kode yang benar penulisannya (sintaksis) tetapi salah fungsinya (Hou dkk., 2024). Oleh karena itu, menjalankan kode dan pengujian otomatis penting sebagai acuan kebenaran (ground truth) untuk menyaring keluaran yang salah (Fan dkk., 2023).
+
+#### 2.2.7 AI Coding Agent dan Vibe Coding
+
+Kemampuan LLM mendorong banyak penelitian tentang agen otonom berbasis LLM, yaitu agen yang memakai LLM sebagai pengendali utama untuk mengambil keputusan, membuat rencana, dan bertindak menyelesaikan tugas (Wang dkk., 2024). Dalam pembuatan kode, agen otonom memakai LLM untuk menyusun dan menjalankan rencana penyelesaian masalah melalui serangkaian alat atau pemanggilan API (Jiang dkk., 2026). Dengan kemampuan merencanakan dan menalar tersebut, sistem multiagen berbasis LLM telah diterapkan pada berbagai tahap pengembangan perangkat lunak (He dkk., 2025). Meskipun demikian, pull request yang dibuat agen seperti ini masih dapat ditolak karena pengujiannya gagal atau implementasinya salah (Ehsani dkk., 2026). Dalam penelitian ini, AI Coding Agent adalah agen berbasis LLM yang dapat membaca dan mengubah kode program serta menjalankan perintah berdasarkan instruksi pengembang, yaitu Claude Code.
+
+Istilah vibe coding diperkenalkan oleh Andrej Karpathy pada awal tahun 2025 (Meske dkk., 2025). Vibe coding adalah cara mengembangkan perangkat lunak ketika manusia dan AI generatif bersama-sama menghasilkan artefak perangkat lunak melalui percakapan dalam bahasa alami. Maksud pengembang tidak lagi disampaikan melalui instruksi yang pasti, tetapi ditafsirkan oleh AI berdasarkan kemungkinan (intent mediation) (Meske dkk., 2025). Pengembang mengarahkan pengembangan melalui gambaran besar dan umpan balik berulang, sedangkan AI mengambil alih pekerjaan implementasi (Meske dkk., 2025). Namun, penyesuaian yang terus-menerus dapat membuat maksud pengembang sulit ditelusuri (intent traceability) sehingga kebutuhan awal sulit dihubungkan dengan hasil implementasinya (Meske dkk., 2025). Oleh karena itu, penelitian ini tidak menjadikan vibe coding sebagai metodologi, tetapi menggunakan AI Coding Agent secara terarah berdasarkan artefak perancangan.
+
+#### 2.2.8 Spec-Driven Development
+
+Spec-Driven Development (SDD) adalah cara membangun perangkat lunak dengan menulis spesifikasi sebelum kode. Spesifikasi menjelaskan apa yang harus dilakukan sistem, lalu kode, pengujian, dan dokumentasi dibuat mengikutinya (Martinelli, 2026). Spesifikasi diperlakukan sebagai kontrak dan acuan utama (source of truth) yang boleh diubah berdasarkan masukan dari kode atau hasil pengujian (Martinelli, 2026). AI Unified Process adalah penerapan SDD yang memakai tiga dokumen utama, yaitu daftar kebutuhan, entity model, dan system use case (Martinelli, 2026). Setiap kebutuhan dan use case diberi ID tetap, misalnya FR-001 untuk kebutuhan fungsional dan UC-001 untuk use case. ID tersebut ditulis kembali di dokumen lain, kode program, pengujian, dan commit sehingga setiap kebutuhan dapat dilacak sampai ke kodenya. Saat memakai agen AI, pengembang tidak memberi perintah umum seperti “tambahkan validasi pada formulir”, tetapi meminta agen mengerjakan use case tertentu, misalnya “Implement UC-012”. Dengan cara ini, agen hanya bekerja sesuai use case yang sudah disetujui (Martinelli, 2026).
+
+Setelah agen selesai, kode dibandingkan dengan use case. Kode yang menambahkan perilaku di luar use case dianggap bermasalah, begitu pula kode yang melewatkan aturan bisnis di dalam use case (Martinelli, 2026). Pengujian juga disusun dari use case yang sama, yaitu skenario utama menjadi pengujian alur sukses, skenario alternatif menjadi skenario uji tambahan, aturan bisnis menjadi pemeriksaan (assertion), dan kondisi akhir (postcondition) menjadi pemeriksaan keadaan akhir sistem (Martinelli, 2026). AI dapat membantu membuat pengujian, tetapi tidak dapat memastikan kebenarannya sehingga pengujian tetap harus diperiksa oleh manusia (Martinelli, 2026). Dengan demikian, use case yang sama menjadi acuan bagi pembuatan kode, peninjauan hasil, dan pengujian.
+
+Salah satu alat bantu penerapan SDD adalah GitHub Spec Kit yang dijalankan melalui command line. Alat ini membagi pekerjaan agen AI ke dalam lima tahap berurutan, yaitu constitution, specification, planning, tasks, dan implementation. Setiap tahap menghasilkan dokumen Markdown yang disimpan di sistem kendali versi sehingga langkah penting tidak terlewat sebelum kode dibuat (Martinelli, 2026). Dokumentasi resmi Spec Kit menjelaskan tahap-tahap tersebut lebih rinci dan menamainya sesuai perintah pada AI Coding Agent, yaitu constitution, specify, plan, tasks, dan implement (Delimarsky & Riem, 2026). Tahap constitution dijalankan sekali untuk setiap proyek, sedangkan tahap lainnya dijalankan untuk setiap fitur. Dokumentasi tersebut juga menambahkan tahap converge sebagai tahap terakhir, serta tahap opsional clarify, checklist, dan analyze untuk menjaga mutu dokumen sebelum kode dibuat (Delimarsky & Riem, 2026). Fungsi dan keluaran setiap tahap dapat dilihat pada Tabel 2.2.
+
+Tabel 2.2  Tahapan GitHub Spec Kit
+
+| No | Tahap | Fungsi | Keluaran |
+|---|---|---|---|
+| 1 | Constitution | Menetapkan prinsip proyek yang menjadi acuan untuk menilai semua tahap berikutnya | constitution.md |
+| 2 | Specify | Menuliskan apa yang harus dibangun dan alasannya dari sisi pengguna, tanpa menyebut teknologi yang digunakan | spec.md |
+| 3 | Clarify (opsional) | Mengajukan paling banyak lima pertanyaan tentang bagian spesifikasi yang belum jelas, lalu memasukkan jawabannya ke dalam spesifikasi | spec.md yang diperbarui |
+| 4 | Plan | Menyusun rancangan teknis dari spesifikasi berdasarkan teknologi, arsitektur, dan batasan teknis yang diberikan pengembang | plan.md, research.md, data-model.md, contracts/, dan quickstart.md |
+| 5 | Checklist (opsional) | Membuat daftar periksa untuk menilai kelengkapan, kejelasan, dan konsistensi spesifikasi | Daftar periksa mutu kebutuhan |
+| 6 | Tasks | Memecah rancangan menjadi daftar tugas yang berurutan sesuai ketergantungannya | tasks.md |
+| 7 | Analyze (opsional) | Memeriksa pertentangan, kekosongan, dan ambiguitas antara spesifikasi, rencana, dan daftar tugas tanpa mengubah dokumen | Laporan analisis |
+| 8 | Implement | Mengerjakan tugas pada daftar tugas sesuai urutan ketergantungannya untuk menghasilkan kode | Kode program |
+| 9 | Converge | Membandingkan kode dengan spesifikasi, rencana, dan daftar tugas, lalu menambahkan tugas baru jika masih ada kekurangan | Tugas tambahan atau status Converged |
+
+Tahap implement dan converge diulang sampai converge menyatakan bahwa kode sudah memenuhi spesifikasi, rencana, dan daftar tugas. Tahap converge tidak mengubah kode, tetapi hanya menambahkan tugas baru ke daftar tugas (Delimarsky & Riem, 2026). Template spesifikasi bawaan Spec Kit menuliskan kebutuhan sebagai user story, yaitu gambaran perjalanan pengguna dalam bahasa sehari-hari yang diberi prioritas dan dapat diuji secara mandiri. Setiap user story dilengkapi skenario penerimaan Given–When–Then, yaitu keadaan awal (Given), tindakan (When), dan hasil yang diharapkan (Then) (Delimarsky & Riem, 2026). Template tersebut dapat diganti atau disesuaikan melalui preset, yaitu pengaturan tambahan bertingkat atas template, perintah, dan skrip Spec Kit tanpa mengubah file intinya (Delimarsky & Riem, 2026).
+
+Perkembangan pembuatan kode dengan LLM dan asisten pemrograman berbasis agen juga memunculkan pendekatan spec-driven engineering. Pendekatan ini memakai spesifikasi yang terus diperbarui untuk mengarahkan agen LLM membuat kode secara otomatis, sejalan dengan gagasan SDD (Feng dkk., 2026). Kebutuhan akan pendekatan ini muncul karena kualitas keluaran LLM turun cukup jauh ketika pembuatan kode diperluas dari tingkat fungsi ke tingkat repositori. Selain itu, alur kerja yang hanya mengandalkan prompt bahasa alami mudah menimbulkan ambiguitas dan sulit diverifikasi (Feng dkk., 2026). Untuk mengatasinya, Feng dkk. (2026) mengusulkan SSDE yang memakai artefak terstruktur untuk mengarahkan LLM. Alur SSDE dapat dilihat pada Gambar 2.9.
+
+[Gambar]
+Gambar 2.9  Gambaran SSDE pada Studi Percontohan (diadaptasi dari Feng dkk., 2026)
+
+Dalam SSDE, masukan bagi LLM terdiri atas spesifikasi bahasa alami dan spesifikasi terstruktur, yaitu spesifikasi Gherkin, controller template, dan domain model (Feng dkk., 2026). Gherkin telah dijelaskan pada Subbab 2.1, sedangkan domain model ditulis sebagai model perangkat lunak dengan notasi seperti Umple atau Ecore (Feng dkk., 2026). Dari domain model tersebut, pembuat kode otomatis (code generator) menghasilkan lapisan model beserta signature model, yaitu model API lapisan model sehingga LLM cukup membuat kode controller yang berinteraksi dengan lapisan tersebut (Feng dkk., 2026). Spesifikasi bahasa alami ditulis secara bebas, tetapi tetap lengkap karena memuat tujuan sistem, use case, dan batasan yang dibutuhkan logika bisnis (Feng dkk., 2026). Sebaliknya, spesifikasi Gherkin berisi contoh konkret perilaku sistem dalam berbagai kondisi yang dapat dipetakan langsung menjadi kasus uji (Feng dkk., 2026).
+
+Kebutuhan akan spesifikasi yang jelas juga muncul dari praktik vibe coding yang memadukan LLM, rekayasa prompt, dan berbagai alat secara spontan (ad hoc) sehingga dokumentasi menjadi tidak formal dan cepat usang (Hamdaqa & Chouchen, 2026). Selain itu, kebutuhan sering tidak ditulis dengan jelas, sedangkan peninjauan kode dan pengujian hanya mencakup sebagian artefak yang menentukan perilaku sistem (Hamdaqa & Chouchen, 2026). Akibatnya, pertanyaan apakah sistem sudah berperilaku sesuai maksud, sesuai yang diizinkan, atau justru melakukan hal yang dilarang tidak dapat dijawab dengan andal setelah sistem dijalankan (Hamdaqa & Chouchen, 2026). Oleh karena itu, spesifikasi perlu dijadikan acuan utama kebenaran (correctness), yaitu komitmen tertulis tentang perilaku yang wajib, boleh, dan dilarang (Hamdaqa & Chouchen, 2026). Dalam gagasan ini, spesifikasi menentukan apa yang benar, kode menjalankan mekanismenya, dan pengujian serta analisis memberikan buktinya (Hamdaqa & Chouchen, 2026).
+
+Spesifikasi bagi AI Coding Agent dapat disusun dengan beberapa pendekatan yang berbeda tingkatnya, mulai dari format teks sampai proses perancangan lengkap. Perbandingan pendekatan tersebut dapat dilihat pada Tabel 2.3. Model-driven development (MDD) tidak dimasukkan karena menuntut notasi pemodelan dan alat pembuat kode yang rumit (Martinelli, 2026). Dari perbandingan tersebut, hanya ICONIX Process yang memiliki langkah perantara antara teks use case dan kelas, yaitu robustness diagram dan sequence diagram. Kelebihan ini disertai usaha pemodelan yang lebih besar sehingga manfaatnya bagi AI Coding Agent perlu diteliti.
+
+Tabel 2.3  Perbandingan Pendekatan Penyusunan Spesifikasi bagi AI Coding Agent
+
+| No | Pendekatan | Artefak Spesifikasi | Keterangan sebagai Masukan AI Coding Agent |
+|---|---|---|---|
+| 1 | User story (templat bawaan Spec Kit) | User story berprioritas dan skenario Given–When–Then | Mudah ditulis dan dapat diuji, tetapi hanya menyatakan maksud pengguna, bukan perilaku sistem (Delimarsky & Riem, 2026; Martinelli, 2026) |
+| 2 | AI Unified Process | Daftar kebutuhan, entity model, dan teks system use case dalam Markdown | Perilaku dan alternatif dirinci dengan ID yang dapat ditelusuri; diagram UML seperti use case diagram hanya menjadi pelengkap (Martinelli, 2026) |
+| 3 | SSDE | Bahasa alami, Gherkin, controller template, domain model, dan signature model | Menaikkan test pass rate pada pembuatan kode 0-shot, tetapi membutuhkan pembuat kode otomatis dan diuji pada sistem MVC yang sudah ada (Feng dkk., 2026) |
+| 4 | Class diagram UML | Class diagram dalam PlantUML atau gambar, dapat ditambah OCL | Kode mengikuti struktur dan batasan yang dinyatakan, tetapi hanya satu jenis diagram dan hasilnya menurun pada diagram multikelas (Antal dkk., 2024; Cheon, 2025) |
+| 5 | ICONIX Process | Domain model, teks use case, robustness diagram, sequence diagram, dan class diagram | Perilaku dan struktur terhubung dan dapat ditelusuri sampai pengujian, tetapi usaha pemodelannya lebih besar dan belum diteliti sebagai masukan AI (Rosenberg & Stephens, 2007) |
+
+Dalam penelitian ini, ICONIX Process berperan sebagai metode perancangan yang menghasilkan spesifikasi, sedangkan SDD dengan GitHub Spec Kit berperan sebagai cara spesifikasi tersebut diberikan kepada AI Coding Agent dan diperiksa kembali. Artefak ICONIX yang dijadikan spesifikasi meliputi domain model, use case, robustness diagram, sequence diagram, dan class diagram. Pilihan ini sejalan dengan SSDE yang memakai model perangkat lunak sebagai masukan terstruktur bagi LLM. Setiap hasil implementasi dibandingkan kembali dengan spesifikasinya untuk melihat bagian yang sesuai dan yang menyimpang. Dengan begitu, AI Coding Agent bekerja berdasarkan spesifikasi hasil analisis dan perancangan, bukan instruksi bebas. AI Unified Process menulis spesifikasi dalam teks Markdown dan menganggap bahasa pemodelan berat seperti UML tidak lagi diperlukan (Martinelli, 2026). Sebaliknya, penelitian ini tetap memakai diagram UML ICONIX sebagai bagian dari spesifikasi sehingga juga melihat seberapa baik AI Coding Agent mengikuti spesifikasi berbentuk diagram UML.
+
+#### 2.2.9 Progressive Web App
+
+Progressive Web App (PWA) adalah aplikasi yang dibangun dengan teknologi platform web, tetapi memberikan pengalaman pengguna seperti aplikasi khusus platform (Mozilla, t.t.-b). Seperti aplikasi khusus platform, PWA dapat dipasang pada perangkat dan tetap dapat berjalan saat offline (Mozilla, t.t.-b). Pada PWA, file aplikasi, video, dan PDF disimpan di cache pengguna sehingga konten tetap dapat diakses meskipun koneksi internet lambat (Suradijaya dkk., 2026). Service worker adalah program perantara antara aplikasi web, browser, dan jaringan (Mozilla, t.t.-c). Program ini berada di antara aplikasi dan jaringan, lalu menentukan kapan konten diambil dari cache dan kapan diambil dari jaringan sehingga aplikasi web tetap dapat diakses saat offline (Idowu dkk., 2022). Komponen lainnya adalah web app manifest, yaitu file teks berformat JSON yang berisi informasi aplikasi, seperti nama dan ikon (Mozilla, t.t.-d). Browser membutuhkan informasi ini untuk memasang PWA pada perangkat pengguna (Mozilla, t.t.-d). Dengan begitu, aplikasi web dapat berjalan seperti aplikasi native (Suradijaya dkk., 2026).
+
+Hubungan aplikasi web, web app manifest, service worker, cache, dan jaringan pada PWA dapat dilihat pada Gambar 2.10. Elemen statis seperti CSS, JavaScript, dan logo aplikasi dapat disimpan di cache saat instalasi pertama, sedangkan konten besar seperti video dan PDF disimpan saat pertama kali diakses (Suradijaya dkk., 2026). Materi yang sudah pernah dibuka tetap dapat diakses ketika koneksi lemah atau terputus sementara tanpa diunduh ulang (Suradijaya dkk., 2026). PWA juga mendukung sinkronisasi latar belakang (background sync) sehingga data yang disimpan saat tidak ada koneksi dikirim ke server secara otomatis begitu koneksi tersedia kembali (Suradijaya dkk., 2026). Selain itu, PWA dapat ditambahkan ke layar utama perangkat melalui fitur add to home screen tanpa membuka toko aplikasi (app store) (Suradijaya dkk., 2026).
+
+[Gambar]
+Gambar 2.10  Komponen Utama Progressive Web App (disusun berdasarkan uraian Suradijaya dkk., 2026)
+
+Kemampuan tersebut sesuai dengan kebutuhan sistem pelaporan FSM UNDIP karena petugas memakai ponsel di berbagai lokasi kampus dengan kondisi jaringan yang berbeda-beda, sedangkan atasan memantau pekerjaan melalui komputer. PWA dapat dijalankan di berbagai platform dan perangkat dari satu kode program (Mozilla, t.t.-b). Petugas juga dapat menambahkan aplikasi ke layar utama ponsel tanpa membuka toko aplikasi (Suradijaya dkk., 2026) sehingga aplikasi mudah dibuka saat bekerja di lapangan. Dengan begitu, petugas dan atasan tidak perlu memasang aplikasi yang berbeda untuk ponsel dan komputer. Oleh karena itu, satu aplikasi PWA cukup untuk melayani kedua jenis pengguna dan dipilih sebagai bentuk aplikasi dalam penelitian ini.
+
+#### 2.2.10 Otomatisasi Alur Kerja dengan n8n dan OpenRouter
+
+n8n adalah platform otomatisasi alur kerja (workflow automation) berbasis low-code (Sholihah dkk., 2026). Alur kerja pada n8n adalah kumpulan node yang mengotomatiskan suatu proses, sedangkan node adalah komponen tunggal penyusun alur kerja (n8n, t.t.-a). Dengan pendekatan low-code, integrasi antaraplikasi dapat disusun melalui node tanpa menyiapkan infrastruktur pemrograman yang rumit (Sholihah dkk., 2026). Alur kerja n8n dijalankan oleh trigger node, yaitu node khusus yang aktif ketika kondisi tertentu terpenuhi (n8n, t.t.-a). Contohnya adalah Webhook node yang menerima data dari aplikasi atau layanan lain ketika suatu peristiwa terjadi (n8n, t.t.-c). Webhook node dapat menjalankan alur kerja secara otomatis setiap kali ada data baru yang masuk, misalnya pendaftaran atau pertanyaan dari pengguna (Sholihah dkk., 2026). Contoh lainnya adalah Schedule Trigger node yang menjalankan alur kerja pada selang waktu dan jam tertentu (n8n, t.t.-b).
+
+n8n juga menyediakan AI Agent node sebagai pemroses bahasa di dalam alur kerja (Sholihah dkk., 2026). AI agent adalah sistem AI yang memakai LLM untuk memahami permintaan dan menentukan tindakan yang perlu dilakukan (n8n, t.t.-a). Dalam penelitian ini, AI Agent node dipakai untuk menghasilkan usulan kategori tiket dari deskripsi laporan. Namun, LLM dapat mengalami halusinasi seperti dijelaskan pada Subbab 2.2.6 (Fan dkk., 2023). Oleh karena itu, hasil klasifikasi AI tetap harus diperiksa oleh petugas.
+
+Telegram digunakan sebagai sarana petugas untuk melaporkan pekerjaan dan menerima tugas melalui bot Telegram, yaitu aplikasi kecil yang berjalan sepenuhnya di dalam Telegram (Telegram, t.t.). Bot Telegram dapat menyampaikan peringatan tepat waktu dan mudah digunakan oleh penerimanya (Wahid dkk., 2024). Pengembang mengendalikan bot melalui Bot API, yaitu versi sederhana Telegram API yang khusus untuk bot (Telegram, t.t.). Telegram Bot API dapat dihubungkan langsung dengan alur kerja n8n sebagai saluran notifikasi (Sholihah dkk., 2026). Dengan pertimbangan tersebut, n8n dipilih untuk alur kerja otomatisasi, sedangkan Telegram dipilih sebagai saluran komunikasi petugas.
+
+OpenRouter adalah platform yang menyediakan akses ke berbagai penyedia LLM, termasuk model terbaru, melalui satu endpoint yang mengikuti prinsip RESTful API (Illueca-Fernandez dkk., 2026). Endpoint adalah alamat pada aplikasi yang menerima dan menangani permintaan dari aplikasi lain (Muharom dkk., 2025). OpenRouter mengatur batas permintaan melalui load balancing dan sistem antrean, serta menyediakan data analisis penggunaan (Illueca-Fernandez dkk., 2026). Dengan OpenRouter, model dari berbagai penyedia, seperti Anthropic, OpenAI, Google, DeepSeek, dan xAI, dapat digunakan dalam satu aplikasi (Illueca-Fernandez dkk., 2026). Posisi OpenRouter sebagai penghubung aplikasi dengan berbagai penyedia LLM dapat dilihat pada Gambar 2.11.
+
+[Gambar]
+Gambar 2.11  OpenRouter sebagai Gerbang Terpadu Akses LLM (disusun berdasarkan uraian Illueca-Fernandez dkk., 2026)
+
+Dalam penelitian ini, n8n berada di luar aplikasi PWA dan terhubung dengan aplikasi melalui RESTful API. Aplikasi mengirim data tiket ke alur kerja n8n, lalu alur kerja memprosesnya dengan model di OpenRouter dan mengembalikan usulan klasifikasi ke aplikasi. n8n juga terhubung dengan Telegram untuk pelaporan pekerjaan dan penerimaan tugas oleh petugas, serta dengan Google Spreadsheet dan Google Calendar untuk pencatatan. Alur kerja n8n tidak dirancang dengan ICONIX Process dan tidak dibuat oleh AI Coding Agent, tetapi disusun dan dikonfigurasi secara manual oleh pengembang. Hubungan aplikasi, n8n, dan layanan luar digambarkan dalam desain arsitektur sistem pada Bab III. Jika layanan AI tidak merespons, pelaporan tetap dapat dilakukan secara manual.
+
+#### 2.2.11 Teknologi Pengembangan Sistem
+
+Sistem pelaporan FSM UNDIP membutuhkan teknologi yang mendukung aplikasi web berbasis PWA, pengelolaan data relasional, dan integrasi dengan layanan otomatisasi. Sesuai dengan prinsip technical architecture pada ICONIX Process, teknologi dipilih berdasarkan kebutuhan sistem, bukan hanya karena sedang populer (Rosenberg & Stephens, 2007). Teknologi utamanya adalah Next.js sebagai framework aplikasi web dan PostgreSQL sebagai sistem manajemen basis data, sedangkan n8n dan OpenRouter digunakan untuk otomatisasi berbantuan AI (Subbab 2.2.10). Teknologi tersebut menjadi bagian dari technical architecture yang ditetapkan pada tahap analysis/preliminary design (Subbab 3.2.4). Pengertian dan alasan pemilihan setiap teknologi dijelaskan pada subbab berikut.
+
+##### 2.2.11.1 Next.js
+
+Next.js adalah framework berbasis React.js yang secara bawaan mendukung server-side rendering (SSR) (Hidayatullah & Suartana, 2025). Next.js menambahkan fitur dan optimasi di atas React serta mengatur alat pendukung pengembangan secara otomatis (Vercel, 2026). SSR adalah teknik rendering halaman web di sisi server sehingga halaman yang dikirim ke browser sudah berisi konten lengkap dan siap ditampilkan (Hidayatullah & Suartana, 2025). Sebaliknya, pada client-side rendering (CSR), browser mengunduh halaman awal yang masih minim beserta JavaScript, lalu JavaScript tersebut menyusun halaman di perangkat pengguna (Vercel, 2025). Akibatnya, pengguna dapat mengalami jeda sebelum halaman tampil utuh, terutama pada koneksi internet atau perangkat yang lambat (Vercel, 2025). Penerapan SSR dengan Next.js dapat mempercepat tampilan halaman (Hidayatullah & Suartana, 2025). Pada pengukuran dengan Lighthouse, yaitu alat sumber terbuka untuk mengukur berbagai aspek kinerja situs web, skor performa rata-rata naik dari 50 menjadi 89,4 setelah SSR diterapkan. Largest Contentful Paint (LCP), yaitu waktu untuk menampilkan elemen terbesar di layar pengguna, juga turun dari sekitar 9 detik menjadi paling lama 1,9 detik (Hidayatullah & Suartana, 2025).
+
+Dalam penelitian ini, Next.js digunakan bersama TypeScript, yaitu JavaScript dengan tambahan aturan tentang jenis nilai yang boleh digunakan (Microsoft, t.t.). TypeScript memeriksa kesalahan berdasarkan jenis nilai sebelum program dijalankan sehingga disebut pemeriksa tipe statis (Microsoft, t.t.). Sistem tipe statis dapat mendeteksi sekitar 15% kesalahan program (bug) pada proyek JavaScript publik (Gao dkk., 2017). Pemeriksaan tipe juga membantu memastikan kelas, atribut, dan tipe data pada kode sesuai dengan class diagram. Oleh karena itu, Next.js dengan TypeScript dipilih karena halaman dapat tampil lebih cepat pada ponsel petugas dan struktur kodenya dapat diperiksa terhadap artefak perancangan.
+
+##### 2.2.11.2 PostgreSQL
+
+PostgreSQL adalah sistem manajemen basis data yang berasal dari paket POSTGRES buatan University of California, Berkeley, dan banyak dipilih oleh organisasi besar (Salunke & Ouda, 2024). Salah satu keunggulannya adalah Multi-Version Concurrency Control (MVCC) yang memungkinkan beberapa transaksi mengakses data yang sama secara bersamaan tanpa saling menghalangi (Salunke & Ouda, 2024). PostgreSQL juga menyediakan berbagai pilihan indeks untuk mempercepat pencarian data yang kompleks (Salunke & Ouda, 2024). Selain itu, PostgreSQL menyediakan tipe data JSON/JSONB untuk menyimpan data berformat JSON (Salunke & Ouda, 2024). Dengan begitu, data tabel dan data JSON dapat dikelola dalam satu basis data.
+
+Sistem pelaporan FSM UNDIP memiliki data yang saling berhubungan, seperti pengguna, struktur organisasi, tiket, riwayat status, dan tugas rutin sehingga membutuhkan basis data relasional. Jika pada tahap perancangan ditemukan atribut yang berbeda untuk setiap jenis tiket, tipe data JSON/JSONB dapat dipertimbangkan untuk menyimpannya. PostgreSQL juga dipakai sebagai basis data aplikasi maupun n8n sehingga pengelolaan infrastruktur lebih sederhana. Skema basis data dirancang dari kelas entitas pada class diagram hasil tahap detailed design. Relasi antartabel pada basis data relasional membantu menjaga keterkaitan data tiket dengan pengguna, unit organisasi, dan tugas rutinnya.
+
+#### 2.2.12 RESTful API
+
+RESTful API, yang juga dikenal sebagai web API, terdiri atas sejumlah endpoint yang masing-masing menjalankan satu fungsi dari suatu proses bisnis dan umumnya diakses melalui HTTP (Ehsan dkk., 2022). Pada RESTful API, data diperlakukan sebagai sumber daya (resource) yang diolah menggunakan metode HTTP standar (Muharom dkk., 2025). Metode GET, POST, PUT, dan DELETE berturut-turut digunakan untuk membaca, menambah, memperbarui, dan menghapus data (Muharom dkk., 2025). Data umumnya dipertukarkan dalam format JSON, yaitu format teks murni yang mudah dikenali dan diolah oleh mesin di berbagai jaringan dan platform (Ehsan dkk., 2022). Karena memakai format data yang umum seperti JSON, RESTful API dapat dipahami oleh berbagai perangkat dan platform sehingga aplikasi pihak ketiga dapat terintegrasi dengan sistem (Amras dkk., 2023).
+
+Dalam penelitian ini, RESTful API menjadi jalur komunikasi antara antarmuka PWA dan logika aplikasi, serta antara aplikasi dan n8n. Melalui jalur tersebut, aplikasi dan n8n bertukar data tiket serta usulan klasifikasi dalam format JSON. Setiap endpoint disusun dari controller pada robustness diagram dan pesan pada sequence diagram sehingga hubungan desain dan kode tetap dapat ditelusuri. Spesifikasi endpoint tersebut menjadi bagian masukan bagi AI Coding Agent pada tahap implementasi. Komunikasi dengan n8n juga dirancang agar pelaporan tetap dapat dilakukan secara manual ketika n8n tidak merespons (Subbab 2.2.10).
+
+#### 2.2.13 Pengujian Perangkat Lunak
+
+Pengujian perangkat lunak dilakukan untuk membuktikan bahwa perangkat lunak sesuai dengan tujuan yang ditetapkan (Rosenberg & Stephens, 2007). Pengujian baru bermakna jika kasus uji disusun dari kebutuhan karena pengujian yang lulus tetapi tidak terkait kebutuhan tidak membuktikan kesesuaian perangkat lunak (Rosenberg & Stephens, 2007). Dalam ICONIX Process, setiap jenis pengujian dikaitkan dengan tahap pengembangan tertentu, misalnya pengujian integrasi untuk memastikan preliminary design sudah diimplementasikan sesuai spesifikasi (Rosenberg & Stephens, 2007). Pengujian juga sebaiknya menjadi bagian dari siklus pengembangan yang iteratif dan inkremental, bukan kegiatan yang hanya dilakukan setelah kode selesai dibuat (Rosenberg & Stephens, 2007). Hubungan tahap pengembangan dan jenis pengujian pada ICONIX Process dapat dilihat pada Gambar 2.12.
+
+[Gambar]
+Gambar 2.12  Hubungan Tahap ICONIX Process dan Jenis Pengujian (disusun berdasarkan uraian Rosenberg & Stephens, 2007)
+
+Pengujian sistem dilakukan setelah pengujian integrasi dengan kasus uji fungsional dan perilaku yang disusun dari spesifikasi tanpa melihat cara kerja internal komponen. Sebagian besar pengujian ini berupa pengujian alur use case, proses bisnis, dan kebutuhan fungsional (Rosenberg & Stephens, 2007). Pengujian berdasarkan spesifikasi komponen atau sistem seperti ini disebut black-box testing (International Software Testing Qualifications Board, t.t.). Persiapan pengujian sistem dapat dimulai segera setelah teks use case ditulis, tetapi sebaiknya menunggu preliminary design use case tersebut selesai karena hasilnya dapat mengubah use case (Rosenberg & Stephens, 2007). Sementara itu, pengujian penerimaan (acceptance testing) adalah pengujian formal oleh atau atas nama pelanggan untuk menentukan apakah sistem sudah memenuhi kebutuhan yang disepakati dalam kontrak (Rosenberg & Stephens, 2007).
+
+Penelitian ini menggunakan black-box testing sebagai satu-satunya teknik pengujian untuk memeriksa pemenuhan kebutuhan fungsional dan acceptance criteria. Kasus uji disusun dari skenario utama dan skenario alternatif setiap use case inti. Cara ini sesuai dengan anjuran ICONIX untuk menguji penerimaan pada tingkat skenario setiap use case (Rosenberg & Stephens, 2007). Pengujian dilakukan pada aplikasi yang kodenya dihasilkan oleh AI Coding Agent melalui GitHub Spec Kit. Dengan demikian, hasil pengujian menunjukkan apakah aplikasi sudah berperilaku sesuai dengan skenario use case yang dirancang.
+
+## BAB III METODOLOGI PENELITIAN
+
+Bab ini menjelaskan metode dan tahapan penelitian untuk menjawab rumusan masalah. Pembahasannya meliputi desain penelitian, analisis proses bisnis as-is dan to-be, tahapan pengembangan aplikasi dengan ICONIX Process, desain arsitektur sistem, penyusunan artefak ICONIX sebagai spesifikasi bagi AI Coding Agent melalui GitHub Spec Kit, serta pengujian aplikasi. Desain penelitian menjelaskan jenis penelitian dan data yang digunakan. Tahapan penelitian menguraikan aktivitas pada setiap tahap ICONIX Process beserta keluarannya. Bagian akhir bab ini menjelaskan cara data dikumpulkan dan cara hasil black-box testing dianalisis untuk menjawab rumusan masalah.
+
+### 3.1 Desain Penelitian
+
+Penelitian ini merupakan penelitian rancang bangun yang menggunakan ICONIX Process sebagai metode pengembangan dan Spec-Driven Development (SDD) sebagai pendekatan implementasi. Objek penelitiannya adalah aplikasi pelaporan layanan operasional FSM UNDIP berbasis Progressive Web App yang dibangun dari awal dan terintegrasi dengan n8n. Artefak ICONIX yang dihasilkan pada tahap analisis dan perancangan disusun menjadi spesifikasi, lalu diberikan kepada AI Coding Agent melalui GitHub Spec Kit pada tahap implementation. Peran AI Coding Agent dibatasi pada pembuatan kode aplikasi berdasarkan spesifikasi tersebut, sedangkan analisis dan perancangan tetap dilakukan oleh peneliti. Aplikasi yang dihasilkan kemudian diuji dengan black-box testing berdasarkan skenario utama dan skenario alternatif setiap use case inti.
+
+Data penelitian terdiri atas hasil rancang bangun dan hasil pengujian. Hasil rancang bangun berupa model proses bisnis, artefak ICONIX, desain arsitektur, dokumen spesifikasi Spec Kit, dokumentasi konfigurasi n8n, dan aplikasi yang dihasilkan. Hasil pengujian berupa status setiap skenario uji pada black-box testing. Hasil rancang bangun digunakan untuk menjawab rumusan masalah pertama, sedangkan hasil pengujian digunakan untuk menjawab rumusan masalah kedua. Hubungan rumusan masalah, data, dan teknik analisis dapat dilihat pada Tabel 3.1.
+
+Tabel 3.1  Keterkaitan Rumusan Masalah, Data, dan Teknik Analisis
+
+| No | Rumusan Masalah | Data yang Dikumpulkan | Teknik Analisis | Keluaran |
+|---|---|---|---|---|
+| 1 | Rancang bangun aplikasi dengan ICONIX Process, SDD, dan integrasi n8n | Model proses bisnis as-is dan to-be, kebutuhan, artefak ICONIX, desain arsitektur, dokumen Spec Kit, dokumentasi konfigurasi n8n, dan kode aplikasi | Peninjauan model proses bisnis dan peninjauan pada setiap milestone ICONIX (Subbab 3.2) | Model proses bisnis, artefak ICONIX yang telah ditinjau, desain arsitektur, dan aplikasi PWA yang terintegrasi dengan n8n |
+| 2 | Hasil black-box testing aplikasi terhadap skenario use case dan kebutuhan fungsional, termasuk fungsi yang terhubung dengan n8n | Skenario uji dan hasil black-box testing setiap use case inti | Black-box testing dan rekapitulasi status skenario uji (Subbab 3.2.9 dan 3.4) | Status setiap skenario uji serta daftar kebutuhan fungsional yang sudah dan belum terpenuhi |
+
+### 3.2 Tahapan Penelitian
+
+Tahapan penelitian mengikuti empat tahap ICONIX Process, yaitu requirements, analysis/preliminary design, detailed design, dan implementation, dengan milestone peninjauan di setiap peralihan tahap (Rosenberg & Stephens, 2007). Tahap requirements dilakukan untuk seluruh sistem, sedangkan tahap berikutnya diulang untuk sekelompok kecil use case (Rosenberg & Stephens, 2007). Sebelum tahap requirements, penelitian diawali dengan analisis proses bisnis as-is dan to-be sebagai dasar penetapan kebutuhan aplikasi (Bashir & Nuryana, 2024; Lieharyani dkk., 2024). Alur penelitian dapat dilihat pada Gambar 3.1. Kotak bergaris putus-putus menandai tahap ICONIX Process, sedangkan kotak bergaris tebal pada tahap implementation menandai penerapan Spec-Driven Development (SDD) dengan GitHub Spec Kit. Tahap analysis/preliminary design sampai implementation diulang untuk setiap use case inti, sedangkan constitution disusun sekali untuk seluruh proyek (Delimarsky & Riem, 2026).
+
+[Gambar]
+Gambar 3.1  Alur Penelitian
+
+Aplikasi hanya mencakup use case inti, yaitu use case yang memenuhi kriteria berikut:
+
+1. Termasuk dalam proses bisnis permintaan layanan ad-hoc, laporan pekerjaan mandiri, atau tugas rutin terjadwal, termasuk klasifikasi tiket berbantuan AI yang menjadi bagian dari proses tersebut.
+
+2. Memuat aturan bisnis atau logika proses, bukan hanya pengelolaan data master atau konfigurasi.
+
+3. Melibatkan lebih dari satu objek domain atau controller.
+
+Berdasarkan kriteria tersebut, aplikasi mencakup sembilan use case inti. Pada permintaan layanan ad-hoc, use case inti terdiri atas pembuatan permintaan oleh pelapor, klasifikasi tiket berbantuan AI oleh sistem, pengambilan tiket oleh petugas, penyelesaian pekerjaan oleh petugas, serta verifikasi hasil dan pembukaan ulang tiket oleh pelapor. Pada laporan pekerjaan mandiri, use case inti terdiri atas pembuatan laporan oleh petugas dan verifikasi laporan oleh atasan. Pada tugas rutin terjadwal, use case inti terdiri atas pembuatan jadwal oleh atasan dan pelaksanaan tugas oleh petugas. Setiap use case inti dirancang lengkap dengan robustness diagram, sequence diagram, dan class diagram, lalu dibangun oleh AI Coding Agent dan diuji dengan black-box testing. Use case lainnya tetap dicatat pada tahap requirements, tetapi tidak dibangun agar cakupan pekerjaan sesuai dengan skala Tugas Akhir. ID setiap use case inti ditetapkan pada tahap requirements dan disajikan pada Bab IV.
+
+Data pendukung, seperti akun pengguna, peran, skill, jenis tiket, dan unit kerja, disiapkan sebagai data awal pada basis data. Data tersebut tidak dirancang sebagai use case, tidak dibangun sebagai fitur pengelolaan, dan tidak diuji secara khusus. Aplikasi hanya menyediakan proses masuk (login) sederhana agar setiap aktor dapat mengakses use case inti. Fitur lain pada aplikasi saat ini, seperti pengelolaan data oleh admin, pemantauan SLA, dan dashboard pimpinan, juga tidak dibangun. Pembatasan ini menjaga agar pengembangan dan pengujian tetap berfokus pada use case inti.
+
+#### 3.2.1 Analisis Proses Bisnis As-Is dan To-Be
+
+Tahap ini bertujuan memahami proses kerja layanan operasional yang berjalan saat ini dan merancang proses kerja dengan aplikasi baru sebelum kebutuhan disusun. Analisis dilakukan pada tiga proses bisnis, yaitu permintaan layanan ad-hoc, laporan pekerjaan mandiri, dan tugas rutin terjadwal. Model proses digambarkan dengan BPMN karena notasinya mudah dipahami pemangku kepentingan dan memungkinkan validasi terhadap model proses yang dibuat (Lieharyani dkk., 2024). Tahap ini terdiri atas empat aktivitas, yaitu:
+
+1. Peneliti mengumpulkan data tiket dan fitur aplikasi pelaporan FSM yang digunakan saat ini untuk mengetahui alur kerja yang berjalan dan kekurangannya.
+
+2. Peneliti memodelkan proses as-is setiap proses bisnis dalam BPMN dengan satu lane untuk setiap peran, lalu mencatat kendala pada setiap proses.
+
+3. Peneliti merancang proses to-be dengan menentukan aktivitas yang dijalankan aplikasi baru dan aktivitas yang diotomatisasi n8n, seperti penjadwalan tugas, notifikasi, dan klasifikasi laporan.
+
+4. Peneliti meninjau model as-is dan to-be melalui diskusi dengan Koordinator Sistem Informasi FSM UNDIP untuk memastikan model sesuai dengan proses kerja yang sebenarnya.
+
+Keluaran tahap ini berupa diagram BPMN as-is dan to-be untuk ketiga proses bisnis serta daftar perubahan aktivitas di antara keduanya. Model as-is menjadi acuan perancangan model to-be (Bashir & Nuryana, 2024). Setiap aktivitas pada model to-be yang dijalankan atau didukung aplikasi kemudian diturunkan menjadi kebutuhan fungsional dan use case pada tahap requirements. Daftar perubahan aktivitas tersebut juga menunjukkan bagian proses yang ditangani aplikasi dan bagian yang diotomatisasi n8n. Tahap ini dilakukan sekali untuk seluruh sistem.
+
+#### 3.2.2 Tahap Requirements
+
+Tahap requirements bertujuan menghasilkan kebutuhan yang jelas dan dapat ditelusuri sebagai dasar perancangan. Tahap ini terdiri atas enam aktivitas berdasarkan langkah requirements analysis pada ICONIX Process (Rosenberg & Stephens, 2007), yaitu:
+
+1. Peneliti mengidentifikasi aktivitas pada model proses bisnis to-be yang dijalankan atau didukung oleh aplikasi.
+
+2. Berdasarkan aktivitas pertama dan masukan yang diperoleh melalui diskusi dengan Koordinator Sistem Informasi FSM UNDIP, peneliti menyusun functional requirements, nonfunctional requirements, dan business rules untuk sistem baru.
+
+3. Peneliti menyusun domain model awal yang berisi objek utama pada ruang masalah beserta hubungannya.
+
+4. Peneliti membuat prototipe antarmuka (GUI storyboard), menentukan use case, menyusun use case diagram, dan mengelompokkan use case ke dalam paket.
+
+5. Peneliti menulis teks use case draf pertama yang berisi skenario utama (basic course) dan skenario alternatif (alternate course).
+
+6. Peneliti menghubungkan setiap functional requirement dengan use case dan objek domain, kemudian menyusun acceptance criteria untuk setiap use case.
+
+Acceptance criteria disusun dari teks use case dalam format Given–When–Then agar setiap kriteria dapat diperiksa melalui skenario pengujian. Skenario utama menjadi dasar kriteria alur sukses, skenario alternatif menjadi dasar kriteria setiap variasi, dan aturan bisnis menjadi dasar kriteria tingkat aturan (Martinelli, 2026). Cara ini sejalan dengan anjuran ICONIX untuk menulis sedikitnya satu kasus uji bagi setiap kebutuhan (Rosenberg & Stephens, 2007). Keluaran tahap ini berupa daftar kebutuhan, domain model, use case diagram, teks use case, prototipe antarmuka, dan acceptance criteria. Setiap kebutuhan dan use case diberi ID tetap, misalnya FR-xxx untuk kebutuhan fungsional dan UC-xxx untuk use case. ID tersebut ditulis kembali pada artefak, kode, pengujian, dan commit agar setiap kebutuhan dapat ditelusuri (Martinelli, 2026).
+
+#### 3.2.3 Milestone 1: Requirements Review
+
+Requirements Review bertujuan menyamakan pemahaman pengembang dan pemangku kepentingan tentang kebutuhan sebelum perancangan dimulai (Rosenberg & Stephens, 2007). Peneliti meninjau teks use case, domain model, dan prototipe antarmuka bersama Koordinator Sistem Informasi FSM UNDIP. Peninjauan mengacu pada pedoman ICONIX, misalnya domain model harus memuat sedikitnya 80% objek terpenting pada domain masalah (Rosenberg & Stephens, 2007). Use case juga harus berisi skenario utama dan skenario alternatif dalam kalimat aktif serta didukung prototipe antarmuka. Peneliti juga melakukan pemeriksaan silang agar setiap functional requirement terwakili oleh use case dan setiap objek pada use case tercantum pada domain model. Kekurangan yang masih ditemukan dicatat sebagai daftar perbaikan dan diperbaiki sebelum melanjutkan ke tahap berikutnya.
+
+#### 3.2.4 Tahap Analysis/Preliminary Design
+
+Tahap analysis/preliminary design diulang untuk setiap use case inti dan terdiri atas lima aktivitas sesuai ICONIX Process (Rosenberg & Stephens, 2007), yaitu:
+
+1. Peneliti memeriksa kembali teks use case draf pertama dan menghilangkan kalimat yang masih ambigu.
+
+2. Peneliti membuat robustness diagram yang memetakan setiap langkah use case ke boundary object, controller, dan entity object sesuai aturan hubungan antarobjek.
+
+3. Jika ditemukan objek atau atribut baru, peneliti menambahkannya ke dalam domain model.
+
+4. Peneliti memberi nama pada setiap controller, yaitu fungsi logis perangkat lunak yang dibutuhkan agar use case dapat berjalan.
+
+5. Peneliti menulis ulang teks use case agar sesuai dengan robustness diagram.
+
+Pada tahap ini, peneliti juga menetapkan technical architecture, yaitu aplikasi PWA berbasis Next.js, PostgreSQL, dan RESTful API, serta n8n dan OpenRouter untuk klasifikasi tiket (Subbab 2.2.10 hingga 2.2.12). Hubungan aplikasi PWA dan n8n dengan layanan luar, seperti OpenRouter, Telegram, Google Spreadsheet, dan Google Calendar, digambarkan dengan deployment diagram (Rosenberg & Stephens, 2007). Diagram ini juga menunjukkan jalur data antara aplikasi dan n8n serta cara aplikasi tetap berjalan ketika n8n atau layanan AI tidak tersedia. Selain itu, controller pada robustness diagram menjadi dasar penentuan fungsi yang diuji pada tahap implementation. Arsitektur tersebut kemudian ditinjau bersama hasil robustness analysis pada Preliminary Design Review (Subbab 3.2.5).
+
+#### 3.2.5 Milestone 2: Preliminary Design Review
+
+Preliminary Design Review bertujuan memastikan robustness diagram, domain model, dan teks use case saling sesuai sebelum perancangan rinci dimulai (Rosenberg & Stephens, 2007). Peneliti memastikan setiap kalimat use case tergambar pada robustness diagram dan setiap entity tercantum pada domain model. Peneliti juga memeriksa kelengkapan skenario alternatif dan kepatuhan pada aturan penulisan robustness diagram (Rosenberg & Stephens, 2007). Selain itu, jalur data antara aplikasi dan n8n pada desain arsitektur diperiksa kesesuaiannya dengan robustness diagram. Hasil peninjauan dikonsultasikan dengan dosen pembimbing, lalu kekurangannya diperbaiki sebelum masuk ke tahap detailed design.
+
+#### 3.2.6 Tahap Detailed Design
+
+Tahap detailed design dilakukan untuk setiap use case inti dan terdiri atas empat aktivitas (Rosenberg & Stephens, 2007), yaitu:
+
+1. Peneliti membuat satu sequence diagram untuk setiap use case yang memuat skenario utama dan skenario alternatif sekaligus.
+
+2. Peneliti membagi perilaku ke kelas-kelas melalui pesan pada sequence diagram sehingga setiap controller pada robustness diagram diwujudkan sebagai pesan atau operasi.
+
+3. Peneliti menambahkan atribut dan operasi baru ke domain model sehingga berkembang menjadi class diagram.
+
+4. Peneliti merapikan model statis sebelum Critical Design Review dilakukan.
+
+Selain itu, skema basis data disusun dari kelas entitas pada class diagram, sedangkan spesifikasi endpoint API disusun dari controller pada robustness diagram dan pesan pada sequence diagram (Subbab 2.2.11.2 dan 2.2.12). Skema basis data memuat tabel, kolom, tipe data, dan relasi yang dibutuhkan use case inti. Spesifikasi endpoint memuat alamat, metode HTTP, data masukan, dan data keluaran setiap fungsi. Kedua dokumen tersebut membantu menjaga agar kode yang dibuat AI Coding Agent dapat ditelusuri ke class diagram dan sequence diagram. Keluaran tahap ini berupa sequence diagram, class diagram, skema basis data, dan spesifikasi endpoint untuk setiap use case inti.
+
+#### 3.2.7 Milestone 3: Critical Design Review
+
+Critical Design Review bertujuan memastikan rancangan rinci sesuai dengan kebutuhan dan berkualitas baik, termasuk kesinambungan pesan pada sequence diagram (Rosenberg & Stephens, 2007). Peneliti memeriksa kesesuaian sequence diagram dengan teks use case, kelengkapan skenario alternatif, dan ketepatan penempatan operasi pada kelas. Peneliti juga memeriksa apakah setiap kebutuhan fungsional dan nonfungsional dapat ditelusuri ke use case dan kelas (Rosenberg & Stephens, 2007). Artefak yang lolos peninjauan ini menjadi versi spesifikasi bagi AI Coding Agent. Artefak masih dapat diubah setelahnya, tetapi setiap perubahan dicatat beserta alasannya.
+
+#### 3.2.8 Tahap Implementation dengan AI Coding Agent
+
+Tahap implementation menggunakan Claude Code sebagai AI Coding Agent untuk membuat kode aplikasi PWA dari artefak yang sudah ditinjau. Cara ini sejalan dengan anjuran ICONIX agar kode dibuat langsung dari desain, desain dan kode tetap sinkron, serta skenario alternatif ikut diimplementasikan (Rosenberg & Stephens, 2007). Pengembang pada dasarnya tidak menulis kode fitur secara manual, tetapi menyiapkan spesifikasi, memberikan instruksi, meninjau hasil, dan memberikan umpan balik perbaikan jika diperlukan. Asisten LLM berbasis percakapan hanya digunakan sebagai sarana diskusi. Berbeda dengan aplikasi PWA, alur kerja n8n disusun dan dikonfigurasi secara manual oleh peneliti, bukan oleh AI Coding Agent, melalui editor n8n berdasarkan desain arsitektur sistem. Alur kerja tersebut mencakup klasifikasi tiket dengan OpenRouter, pelaporan dan penerimaan tugas melalui Telegram, serta pencatatan ke Google Spreadsheet dan Google Calendar. Pengaturan setiap layanan, seperti pemicu (trigger), webhook, dan jenis kredensial, didokumentasikan tanpa mencantumkan isi kredensialnya. Kode aplikasi yang bertukar data dengan n8n tetap dibuat oleh AI Coding Agent berdasarkan sequence diagram.
+
+##### 3.2.8.1 Penyusunan Spesifikasi
+
+Artefak ICONIX disusun ulang menjadi spesifikasi yang dapat dibaca AI Coding Agent dengan pendekatan Spec-Driven Development (SDD), yaitu spesifikasi ditulis lebih dahulu, lalu kode dan pengujian dibuat mengikutinya (Martinelli, 2026). Penyusunan dibantu GitHub Spec Kit yang membagi pekerjaan AI Coding Agent ke dalam tahap-tahap berurutan (Martinelli, 2026). Penelitian ini memakai tahap constitution, specify, plan, tasks, implement, dan converge seperti pada Tabel 2.2. Tahap opsional analyze juga dipakai untuk memeriksa konsistensi spesifikasi, rencana, dan daftar tugas sebelum kode dibuat (Delimarsky & Riem, 2026). Tahap clarify dan checklist tidak digunakan karena kebutuhan sudah diperjelas melalui Requirements Review dan Preliminary Design Review. Pemetaan artefak ICONIX ke setiap tahap dapat dilihat pada Tabel 3.2.
+
+Tabel 3.2  Pemetaan Artefak ICONIX ke Tahap Spec Kit
+
+| No | Tahap | Artefak ICONIX yang Digunakan | Keluaran |
+|---|---|---|---|
+| 1 | Constitution | Business rules dan keputusan technical architecture | Prinsip dan batasan yang berlaku untuk seluruh implementasi (constitution.md) |
+| 2 | Specify | Functional requirements, nonfunctional requirements, teks use case, dan acceptance criteria | Spesifikasi untuk satu use case (spec.md) |
+| 3 | Plan | Domain model, robustness diagram, sequence diagram, class diagram, skema basis data, dan spesifikasi API | Rencana teknis implementasi (plan.md, data-model.md, contracts/) |
+| 4 | Tasks | Pesan pada sequence diagram dan controller pada robustness diagram | Daftar tugas implementasi yang berurutan (tasks.md) |
+| 5 | Analyze (opsional) | Keluaran tahap Specify, Plan, dan Tasks | Laporan pertentangan dan kekosongan antardokumen |
+| 6 | Implement | Seluruh keluaran tahap sebelumnya | Kode sumber dan pengujian yang dihasilkan AI Coding Agent |
+| 7 | Converge | Kode serta keluaran tahap Specify, Plan, dan Tasks | Tugas tambahan jika masih ada kekurangan |
+
+Artefak disimpan sebagai file teks terpisah untuk setiap unit, misalnya setiap use case, agar AI Coding Agent dapat diarahkan membaca artefak yang sesuai dengan tugasnya. Selain gambar, diagram juga disertakan dalam notasi teks yang dapat dibaca AI Coding Agent, misalnya PlantUML seperti pada Cheon (2025). PlantUML adalah alat sumber terbuka untuk menggambar diagram UML dari deskripsi teks sederhana (PlantUML, t.t.). Asisten LLM berbasis percakapan dapat membantu menuliskan diagram rancangan pengembang ke dalam notasi PlantUML, tetapi isi diagram tetap ditentukan oleh pengembang. Bantuan tersebut dicatat agar dapat dibedakan dari artefak yang disusun sendiri oleh pengembang. Template spesifikasi bawaan Spec Kit berbentuk user story, sedangkan ICONIX menuliskan perilaku sistem dalam teks use case. Oleh karena itu, template spesifikasi disesuaikan melalui preset agar memuat teks use case lengkap dengan basic course, alternate course, dan acceptance criteria (Delimarsky & Riem, 2026). Dengan cara ini, teks use case tidak perlu diubah menjadi user story sehingga keterlacakan antara artefak ICONIX dan spesifikasi tetap terjaga.
+
+##### 3.2.8.2 Prosedur Iterasi Implementasi
+
+Implementasi setiap use case inti dilakukan melalui langkah-langkah berikut:
+
+1. Pengembang menyusun paket spesifikasi use case melalui tahap specify, plan, dan tasks (Tabel 3.2), memeriksanya dengan tahap analyze, lalu mencatat versi artefak yang digunakan.
+
+2. Pengembang menjalankan tahap implement dengan menyebutkan ID use case.
+
+3. AI Coding Agent menghasilkan atau mengubah kode, lalu tahap converge dijalankan. Hasil setiap iterasi disimpan sebagai commit pada sistem kendali versi.
+
+4. Pengembang menjalankan black-box testing pada seluruh skenario uji use case tersebut (Subbab 3.2.9).
+
+5. Jika ada skenario uji yang gagal, pengembang memberikan umpan balik kepada AI Coding Agent untuk memperbaiki kode sebagai iterasi berikutnya.
+
+6. Jika implementasi menunjukkan bahwa desainnya keliru, artefak dan spesifikasi diperbaiki terlebih dahulu sebelum implementasi dilanjutkan.
+
+7. Use case dinyatakan selesai jika seluruh skenario uji lulus.
+
+Langkah keempat sampai keenam merupakan penerapan milestone Code Review and Model Update, yaitu peninjauan untuk menyelaraskan kode dengan model sebelum iterasi berikutnya (Rosenberg & Stephens, 2007). ICONIX juga menganjurkan agar desain diperbaiki jika kesalahan desain ditemukan saat kode ditulis (Rosenberg & Stephens, 2007). Oleh karena itu, setiap perbaikan desain dicatat beserta alasannya. Instruksi kepada AI Coding Agent selalu menyebutkan ID use case agar agen hanya bekerja dalam batas spesifikasi yang sudah disetujui (Martinelli, 2026). Tahap converge hanya digunakan sebagai pemeriksaan otomatis oleh AI Coding Agent terhadap kodenya sendiri. Hasilnya tidak dijadikan dasar penentuan kelulusan karena peninjauan tidak dapat diotomatisasi dan tetap menjadi tanggung jawab manusia (Martinelli, 2026). Kelulusan setiap use case tetap ditentukan oleh black-box testing yang kasus ujinya disusun pengembang (Subbab 3.2.9).
+
+#### 3.2.9 Pengujian Sistem
+
+Pengujian dilakukan dengan black-box testing pada skenario utama dan setiap skenario alternatif dari setiap use case inti (Rosenberg & Stephens, 2007). Misalnya, use case dengan tiga skenario alternatif membutuhkan sedikitnya empat skenario uji (Rosenberg & Stephens, 2007). Kasus uji disusun pengembang dari acceptance criteria setiap use case inti. Penyusunan kasus uji tidak diserahkan kepada AI Coding Agent karena AI dapat membuat pengujian, tetapi tidak dapat memastikan pengujian tersebut sesuai dengan perilaku yang dimaksud (Martinelli, 2026). Black-box testing dijalankan setelah setiap iterasi implementasi sampai seluruh skenario uji lulus. Use case yang melibatkan n8n diuji dari sisi aplikasi dengan memeriksa data yang dikirim ke n8n, hasil yang diterima kembali, dan perilaku aplikasi ketika n8n tidak merespons.
+
+### 3.3 Pengumpulan Data
+
+Data penelitian dikumpulkan dari beberapa sumber sesuai dengan tahapan rancang bangun dan pengujian aplikasi, yaitu:
+
+1. Catatan diskusi bersama Koordinator Sistem Informasi FSM UNDIP, berupa catatan diskusi proses bisnis dan kebutuhan, catatan peninjauan model proses bisnis, serta catatan Requirements Review.
+
+2. Data tiket dan fitur aplikasi pelaporan yang digunakan saat ini sebagai dasar analisis proses bisnis as-is.
+
+3. Hasil rancang bangun, berupa artefak ICONIX, dokumen spesifikasi Spec Kit, riwayat commit pada sistem kendali versi, dan hasil black-box testing setiap use case inti.
+
+Data tiket aplikasi saat ini hanya disajikan dalam bentuk ringkasan (agregat) tanpa nama petugas. Data dari pemangku kepentingan dikumpulkan dengan persetujuan pihak terkait, dan data pribadi tidak dipublikasikan. Hal ini sesuai dengan pertimbangan etika pada studi kasus, antara lain persetujuan partisipan dan kerahasiaan (Runeson & Höst, 2009). Kredensial layanan yang digunakan n8n juga tidak dicantumkan dalam dokumentasi penelitian (Subbab 3.2.8). Dengan cara ini, data penelitian tetap dapat diperiksa tanpa membuka identitas petugas maupun akses ke layanan yang digunakan.
+
+### 3.4 Analisis Hasil Pengujian
+
+Analisis hasil pengujian dilakukan untuk menjawab rumusan masalah kedua. Setiap skenario uji pada black-box testing diberi salah satu status pada Tabel 3.3. Penilaian akhir dilakukan setelah use case dinyatakan selesai, yaitu ketika kode hasil AI Coding Agent tidak lagi diperbaiki. Hasilnya disajikan dalam tabel yang memuat skenario uji, hasil yang diharapkan, hasil yang diperoleh, dan status akhirnya. Skenario uji yang masih gagal atau tidak dapat dijalankan dilaporkan beserta penyebabnya.
+
+Tabel 3.3  Status Hasil Skenario Uji
+
+| No | Status | Definisi |
+|---|---|---|
+| 1 | Lulus | Seluruh langkah dan hasil yang diharapkan pada skenario terpenuhi |
+| 2 | Gagal | Sebagian atau seluruh langkah atau hasil berbeda dari yang diharapkan |
+| 3 | Tidak dapat dijalankan | Fitur yang diperlukan skenario belum tersedia atau tidak dapat diakses |
+
+Hasil pengujian kemudian dirangkum untuk setiap kebutuhan fungsional. Acceptance criteria dinyatakan lulus jika seluruh skenario uji yang terkait dengannya berstatus lulus. Kebutuhan fungsional dinyatakan terpenuhi jika seluruh acceptance criteria yang terkait berstatus lulus. Fungsi yang terhubung dengan n8n dinilai dari perilaku aplikasi, yaitu data yang dikirim ke n8n, hasil yang diterima kembali, dan tanggapan aplikasi ketika n8n tidak merespons. Kebutuhan yang belum terpenuhi dilaporkan beserta penyebabnya agar pengelola layanan operasional FSM UNDIP mengetahui kebutuhan yang masih perlu dilengkapi.
+
+Black-box testing hanya memeriksa perilaku aplikasi sehingga struktur kode yang dihasilkan AI Coding Agent tidak dinilai. Kasus uji juga disusun oleh peneliti yang sekaligus menjadi pengembang. Keterbatasan ini dikurangi dengan menurunkan kasus uji langsung dari acceptance criteria dan meninjaunya bersama dosen pembimbing. Selain itu, aplikasi hanya dibangun untuk use case inti dengan data pendukung sebagai data awal. Oleh karena itu, hasil pengujian hanya berlaku untuk use case inti tersebut.
