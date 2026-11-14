@@ -2,11 +2,24 @@
 
 **Tahap ICONIX:** Requirements (Subbab 3.2.2, aktivitas 3). Belum melalui Milestone 1: Requirements Review.
 **Sumber:** kata benda pada teks use case [`docs/requirements/use-case-inti.md`](../requirements/use-case-inti.md) (draf 2).
-**Diagram:** [`domain-model.puml`](domain-model.puml).
+**Diagram:** [`domain-model.puml`](domain-model.puml) (sumber PlantUML), [`domain-model.png`](domain-model.png) (hasil render).
+
+![Domain model awal](domain-model.png)
 
 > **Catatan asal-usul:** draf ini disusun dengan bantuan asisten AI (Claude Code) berdasarkan teks use case yang ditulis peneliti, lalu ditinjau dan diputuskan peneliti pada 15 Nov 2026 (lihat bagian Keputusan Tinjauan). Bantuan ini dicatat sesuai Subbab 3.2.8.1.
 
-Sesuai ICONIX, domain model pada tahap ini hanya memuat nama kelas, agregasi (*has-a*), generalisasi (*is-a*), dan asosiasi penting. Atribut dan operasi ditambahkan pada tahap robustness analysis dan detailed design. Aktor sistem luar (n8n, OpenRouter, Telegram) tidak dimasukkan karena bukan bagian domain aplikasi.
+Domain model ini mengikuti pedoman domain modeling Rosenberg & Stephens (2007, Bab 2):
+
+| Pedoman | Rujukan |
+|---|---|
+| Hanya nama kelas, tanpa atribut dan operasi | Figure 2-2, hlm. 27 |
+| Utamakan agregasi (*has-a*) dan generalisasi (*is-a*); asosiasi biasa boleh dipakai | Pedoman no. 9, hlm. 27–28 |
+| Tanpa multiplisitas, karena terlalu dini pada domain model awal | Exercise 2-1 Solution, hlm. 41 |
+| Tanpa kelas abstrak, karena itu detail desain | Exercise 2-3 Solution, hlm. 43 |
+| Sistem luar dimodelkan sebagai aktor, bukan kelas | hlm. 35 |
+| Tanpa kelas layar (GUI) dan kelas desain | Pedoman no. 1, hlm. 29 |
+
+Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis dan detailed design ketika domain model berkembang menjadi class diagram. Sistem luar (n8n, OpenRouter, Telegram) tidak dimasukkan karena bukan bagian domain aplikasi.
 
 ## Glosarium
 
@@ -60,3 +73,4 @@ Sesuai ICONIX, domain model pada tahap ini hanya memuat nama kelas, agregasi (*h
 | 3 | Area kerja | `AreaKerja` disiapkan sebagai data awal tersendiri. | Daftar data awal dan UC-32 langkah 2 disesuaikan. |
 | 4 | Rating | `Rating` dipisahkan dari `Verifikasi` karena hanya berlaku untuk tiket. | — |
 | 5 | Atasan yang ditunjuk (K-13) | Dimodelkan sebagai salah satu `Peran`. | — |
+| 6 | Cara penggambaran | Mengikuti pedoman Rosenberg & Stephens (2007, Bab 2): tanpa multiplisitas, tanpa kelas abstrak, dan tanpa kotak paket. | `Pekerjaan` menjadi kelas biasa. |

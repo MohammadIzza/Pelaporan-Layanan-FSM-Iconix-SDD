@@ -3,53 +3,48 @@
 ' docs/requirements/use-case-inti.md (draf 2), lalu ditinjau peneliti
 ' pada 15 Nov 2026. Belum melalui Requirements Review.
 ' Penjelasan setiap kelas: domain-model.md.
+'
+' Mengikuti pedoman domain modeling Rosenberg & Stephens (2007, Bab 2):
+' hanya nama kelas; agregasi, generalisasi, dan asosiasi penting; tanpa
+' atribut, operasi, multiplisitas, maupun kelas abstrak.
 
 @startuml domain-model
 title Domain Model Awal — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 hide circle
 hide empty members
 skinparam classAttributeIconSize 0
-skinparam linetype ortho
 
-package "Organisasi dan Pengguna" {
-  class Pengguna
-  class Peran
-  class UnitKerja
-  class Skill
-  class AkunTelegram
-}
+class Pengguna
+class Peran
+class UnitKerja
+class Skill
+class AkunTelegram
 
-package "Pekerjaan" {
-  abstract class Pekerjaan
-  class Tiket
-  class LaporanMandiri
-  class TugasRutin
-  class HasilPekerjaan
-  class Verifikasi
-  class TimelineEvent
-  class Lampiran
-  class LokasiGPS
-}
+class Pekerjaan
+class Tiket
+class LaporanMandiri
+class TugasRutin
+class HasilPekerjaan
+class Verifikasi
+class TimelineEvent
+class Lampiran
+class LokasiGPS
 
-package "Permintaan Layanan" {
-  class JenisTiket
-  class Klasifikasi
-  class Rating
-}
+class JenisTiket
+class Klasifikasi
+class Rating
 
-package "Tugas Rutin" {
-  class JadwalRutin
-  class AreaKerja
-  class ItemChecklist
-  class HasilChecklist
-}
+class JadwalRutin
+class AreaKerja
+class ItemChecklist
+class HasilChecklist
 
 ' --- Organisasi dan pengguna ---
-Pengguna "1" o-- "1..*" Peran
-Pengguna "1" o-- "0..*" Skill
-Pengguna "1" o-- "0..1" AkunTelegram
-Pengguna "0..*" --> "1" UnitKerja : bekerja di
-Pengguna "0..1" -- "0..*" Pengguna : atasan dari >
+Pengguna o-- Peran
+Pengguna o-- Skill
+Pengguna o-- AkunTelegram
+Pengguna --> UnitKerja : bekerja di
+Pengguna -- Pengguna : atasan dari >
 
 ' --- Generalisasi pekerjaan ---
 Pekerjaan <|-- Tiket
@@ -57,35 +52,35 @@ Pekerjaan <|-- LaporanMandiri
 Pekerjaan <|-- TugasRutin
 
 ' --- Bagian bersama setiap pekerjaan ---
-Pekerjaan "0..*" --> "0..1" Pengguna : primary assignee
-Pekerjaan "1" o-- "0..*" HasilPekerjaan
-Pekerjaan "1" o-- "0..*" Verifikasi
-Pekerjaan "1" o-- "1..*" TimelineEvent
-Verifikasi "0..*" --> "1" Pengguna : verifikator
-TimelineEvent "0..*" --> "0..1" Pengguna : pelaku
-HasilPekerjaan "1" o-- "0..*" Lampiran
-HasilPekerjaan "1" o-- "0..1" LokasiGPS
+Pekerjaan --> Pengguna : primary assignee
+Pekerjaan o-- HasilPekerjaan
+Pekerjaan o-- Verifikasi
+Pekerjaan o-- TimelineEvent
+Verifikasi --> Pengguna : verifikator
+TimelineEvent --> Pengguna : pelaku
+HasilPekerjaan o-- Lampiran
+HasilPekerjaan o-- LokasiGPS
 
 ' --- Permintaan layanan (tiket) ---
-Tiket "0..*" --> "1" Pengguna : pelapor
-Tiket "0..*" --> "1" UnitKerja : unit asal
-Tiket "0..*" --> "0..1" JenisTiket
-Tiket "1" o-- "0..*" Lampiran
-Tiket "1" o-- "0..1" LokasiGPS
-Tiket "1" o-- "0..*" Klasifikasi
-Tiket "1" o-- "0..1" Rating
-Klasifikasi "0..*" --> "0..1" JenisTiket
-JenisTiket "0..*" --> "1..*" Skill : membutuhkan
+Tiket --> Pengguna : pelapor
+Tiket --> UnitKerja : unit asal
+Tiket --> JenisTiket
+Tiket o-- Lampiran
+Tiket o-- LokasiGPS
+Tiket o-- Klasifikasi
+Tiket o-- Rating
+Klasifikasi --> JenisTiket
+JenisTiket --> Skill : membutuhkan
 
 ' --- Laporan mandiri ---
-LaporanMandiri "0..*" --> "1" JenisTiket : jenis pekerjaan
+LaporanMandiri --> JenisTiket : jenis pekerjaan
 
 ' --- Tugas rutin ---
-JadwalRutin "1" o-- "1..*" ItemChecklist
-JadwalRutin "0..*" --> "1" AreaKerja
-JadwalRutin "0..*" --> "1" Pengguna : dibuat oleh (atasan)
-JadwalRutin "0..*" --> "1..*" Pengguna : petugas ditugaskan
-JadwalRutin "1" --> "0..*" TugasRutin : menghasilkan
-HasilPekerjaan "1" o-- "0..*" HasilChecklist
-HasilChecklist "0..*" --> "1" ItemChecklist
+JadwalRutin o-- ItemChecklist
+JadwalRutin --> AreaKerja
+JadwalRutin --> Pengguna : dibuat oleh (atasan)
+JadwalRutin --> Pengguna : petugas ditugaskan
+JadwalRutin --> TugasRutin : menghasilkan
+HasilPekerjaan o-- HasilChecklist
+HasilChecklist --> ItemChecklist
 @enduml
