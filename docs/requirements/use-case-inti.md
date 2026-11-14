@@ -1,13 +1,13 @@
 # Requirement dan Use Case Inti — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 
-**Versi:** draf 3.1 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini. Draf 3.1 menindaklanjuti temuan GUI storyboard T-01 sampai T-21 (keputusan K-18 sampai K-23).
+**Versi:** draf 3.2 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini. Draf 3.1 menindaklanjuti temuan inventaris GUI storyboard T-01 sampai T-21 (K-18 sampai K-23). Draf 3.2 menindaklanjuti tinjauan gambar storyboard percontohan UC-01 dan UC-09 (K-24, K-25).
 **Tahap ICONIX:** Requirements (Subbab 3.2.2). Belum melalui Milestone 1: Requirements Review.
 
 **Sumber:**
 - `Dokumen_Perencanaan_TA_FSM_UNDIP.md`: FR, NFR, BR, daftar 53 UC, narasi proses bisnis, dan AC FR-AI;
 - `Keputusan_UseCase_Inti_4Nov2026.md`: 9 use case inti awal;
 - naskah skripsi Subbab 1.5, Subbab 3.2, dan Subbab 3.2.1–3.2.9;
-- keputusan peneliti atas K-1 sampai K-23 pada 15 Nov 2026 (Bagian 9);
+- keputusan peneliti atas K-1 sampai K-25 pada 15 Nov 2026 (Bagian 9);
 - temuan inventaris GUI storyboard (T-01 sampai T-21) yang disusun dengan bantuan ChatGPT;
 - domain model [`docs/iconix/domain-model.md`](../iconix/domain-model.md);
 - panduan metode [`docs/metode/panduan-eksperimen.md`](../metode/panduan-eksperimen.md).
@@ -331,10 +331,14 @@ Format mengikuti panduan metode §2.3:
 3. **Halaman Tiket Saya** berisi Tiket yang dilaporkan Pengguna dan, bagi Petugas, Tiket yang ia kerjakan sebagai primary assignee, beserta statusnya. **Halaman Laporan Mandiri Saya** berisi Laporan Mandiri milik Petugas beserta statusnya. Kedua halaman ini hanya untuk membuka halaman detail. Timeline dan komentar (UC-02–UC-04) tetap di luar cakupan.
 4. Pola **daftar → detail**: memilih satu item di halaman daftar membuka halaman detail item tersebut.
 5. Penolakan pada UC-05, UC-29, dan UC-30 memakai satu boundary bersama, yaitu **Formulir Penolakan** berisi kolom alasan dan tombol Kirim.
-6. Setiap unggahan foto memiliki tombol **Hapus Foto**. Mengganti foto dilakukan dengan menghapus lalu memilih foto lain. Semua foto mengikuti BR-100.
+6. Setiap unggahan foto memiliki tombol **Hapus Foto** yang hanya tampil setelah foto dipilih. Mengganti foto dilakukan dengan menghapus lalu memilih foto lain. Semua foto mengikuti BR-100.
 7. Setelah aksi terakhir berhasil, Sistem menampilkan halaman yang disebut pada langkah terakhir beserta pesan konfirmasi.
 8. Semua pesan ditulis apa adanya dalam tanda kutip. Pesan yang sama dipakai di halaman web dan dikembalikan oleh endpoint.
 9. Alternate yang menyembunyikan menu, tombol, atau data dan menolak permintaan lewat endpoint tidak memiliki halaman error tersendiri.
+10. **Isi Tiket pada halaman daftar dan detail (K-24):**
+    - setiap item Tiket di Halaman Antrean Tiket, Halaman Tiket Saya, dan Halaman Klasifikasi Tiket memuat nomor Tiket, Jenis Tiket (atau keterangan "Sedang diklasifikasi"/"Belum terklasifikasi"), potongan deskripsi, status, dan waktu dibuat;
+    - Halaman Detail Tiket selalu memuat nomor Tiket, status, Jenis Tiket (atau keterangannya), deskripsi, Lampiran foto dan Lokasi GPS jika ada, Unit Kerja asal, dan waktu dibuat. Tombol dan data tambahan per use case disebut di langkah masing-masing.
+11. Setelah tombol **Ambil Lokasi** berhasil merekam Lokasi GPS, sistem menampilkan keterangan "Lokasi berhasil diambil" (K-25).
 
 ---
 
@@ -351,12 +355,12 @@ Format mengikuti panduan metode §2.3:
 2. Sistem menampilkan Halaman Buat Permintaan Layanan berisi kolom deskripsi, unggahan foto, tombol Ambil Lokasi, dan tombol Kirim.
 3. Pelapor menulis deskripsi masalah.
 4. Pelapor melampirkan satu foto (opsional).
-5. Pelapor menekan tombol Ambil Lokasi (opsional), lalu sistem merekam Lokasi GPS saat itu.
+5. Pelapor menekan tombol Ambil Lokasi (opsional), lalu sistem merekam Lokasi GPS saat itu dan menampilkan keterangan "Lokasi berhasil diambil".
 6. Pelapor menekan tombol Kirim.
 7. Sistem memeriksa bahwa deskripsi terisi dan, jika ada foto, foto memenuhi BR-100.
 8. Sistem menyimpan Tiket berstatus Open, mengisi Unit Kerja asal dari konteks organisasi Pelapor, menyimpan Lampiran dan Lokasi GPS, lalu mencatat Timeline Event pembuatan Tiket beserta pelaku dan waktunya.
 9. Sistem menjalankan **PS-01 Klasifikasikan Tiket** di latar belakang tanpa menunggu hasilnya (K-10).
-10. Sistem menampilkan Halaman Detail Tiket berisi nomor Tiket, status Open, dan keterangan "Sedang diklasifikasi", dengan pesan "Permintaan layanan berhasil dikirim".
+10. Sistem menampilkan Halaman Detail Tiket (isi sesuai konvensi butir 10) dengan status Open dan keterangan "Sedang diklasifikasi", serta pesan "Permintaan layanan berhasil dikirim".
 
 **Alternate courses**
 - **A1 (langkah 7) Deskripsi kosong:** Sistem menampilkan pesan "Deskripsi wajib diisi" di Halaman Buat Permintaan Layanan dan tidak menyimpan Tiket.
@@ -474,9 +478,9 @@ Skenario uji minimal: 5.
 
 **Basic course**
 1. Petugas memilih menu Antrean Tiket.
-2. Sistem menampilkan Halaman Antrean Tiket berisi Tiket berstatus Open yang Jenis Tiket-nya membutuhkan Skill Petugas, kecuali Tiket yang dilaporkan Petugas itu sendiri (K-6).
+2. Sistem menampilkan Halaman Antrean Tiket berisi Tiket berstatus Open yang Jenis Tiket-nya membutuhkan Skill Petugas, kecuali Tiket yang dilaporkan Petugas itu sendiri (K-6). Isi setiap item mengikuti konvensi butir 10.
 3. Petugas memilih satu Tiket.
-4. Sistem menampilkan Halaman Detail Tiket dengan tombol Ambil Tiket.
+4. Sistem menampilkan Halaman Detail Tiket berisi deskripsi, Lampiran foto, Lokasi GPS, dan data lain sesuai konvensi butir 10, dengan tombol Ambil Tiket.
 5. Petugas menekan tombol Ambil Tiket.
 6. Sistem memeriksa bahwa Tiket masih berstatus Open, belum memiliki primary assignee, dan bukan Tiket yang dilaporkan Petugas tersebut.
 7. Sistem menetapkan Petugas sebagai primary assignee, mengubah status Tiket menjadi Assigned, dan mencatat Timeline Event assignment.
@@ -516,7 +520,7 @@ Skenario uji minimal: 5, ditambah 1 uji claim bersamaan, sehingga 6.
 
 **Basic course**
 1. Petugas memilih Tiket miliknya di Halaman Tiket Saya.
-2. Sistem menampilkan Halaman Detail Tiket dengan tombol Mulai Pengerjaan.
+2. Sistem menampilkan Halaman Detail Tiket (isi sesuai konvensi butir 10) dengan tombol Mulai Pengerjaan.
 3. Petugas menekan tombol Mulai Pengerjaan (K-1).
 4. Sistem mencatat waktu mulai, mengubah status Tiket menjadi In Progress, dan menampilkan tombol Selesai Dikerjakan.
 5. Setelah pekerjaan selesai, Petugas menekan tombol Selesai Dikerjakan.
@@ -800,7 +804,7 @@ Skenario uji minimal: 2. Waktu disimulasikan pada lingkungan uji.
 4. Sistem menampilkan Halaman Pelaksanaan Tugas Rutin berisi Item Checklist, tanda Overdue jika ada, dan tombol Ajukan. Unggahan foto akhir dan tombol Ambil Lokasi hanya tampil jika diwajibkan Jadwal Rutin (K-20).
 5. Petugas mencentang Item Checklist yang sudah dikerjakan.
 6. Petugas melampirkan satu foto akhir (jika diwajibkan).
-7. Petugas menekan tombol Ambil Lokasi (jika diwajibkan), dan sistem merekam Lokasi GPS saat itu saja.
+7. Petugas menekan tombol Ambil Lokasi (jika diwajibkan), lalu sistem merekam Lokasi GPS saat itu saja dan menampilkan keterangan "Lokasi berhasil diambil".
 8. Petugas menekan tombol Ajukan.
 9. Sistem memeriksa bahwa seluruh Item Checklist wajib sudah dicentang, dan bukti yang diwajibkan Jadwal Rutin sudah lengkap dengan foto memenuhi BR-100.
 10. Sistem menyimpan Hasil Pekerjaan berisi Hasil Checklist, serta Lampiran dan Lokasi GPS jika ada.
@@ -995,6 +999,8 @@ Aplikasi hanya diuji pada titik pertukaran datanya. Penjadwalan Tugas Rutin dan 
 | K-21 | Halaman asal menu, halaman detail, penolakan, dan tampilan setelah aksi terakhir belum disebut (T-01–T-04, T-08). Selain itu, UC-05, UC-15, dan UC-16 A3 tidak punya halaman untuk menemukan Tiket atau Laporan Mandiri. | Halaman Beranda per Peran, Halaman Tiket Saya, Halaman Laporan Mandiri Saya, pola daftar → detail, Halaman Detail Tugas Rutin, Formulir Penolakan bersama, dan langkah akhir yang menampilkan halaman beserta pesan konfirmasi (Rosenberg & Stephens, 2007, Bab 3 pedoman 6, Bab 4 pedoman 3). | Bagian 7 konvensi; UC-54, UC-15, UC-05, UC-16, UC-29, UC-18, UC-30, UC-32 |
 | K-22 | Banyak pesan hanya dijelaskan maknanya (T-09). Ada juga kontrol yang belum bernama (T-05, T-07, T-11) dan anchor alternate yang tidak konsisten (T-14, T-20, T-21). | Semua pesan ditulis apa adanya. Ditambahkan tombol Hapus Foto, Tambah Item Checklist, dan Hapus Item Checklist, serta riwayat Verifikasi di halaman detail. Anchor UC-18 A2 dan UC-54 A2 diperbaiki, begitu juga salah tulis PS-01 A1. | Seluruh Bagian 7 |
 | K-23 | Label menu bot dan ketentuan kode penautan belum ditetapkan (T-15–T-17). | Menu bot: Laporan, Laporan Mandiri, Tiket, Tugas Rutin. Kode penautan 6 digit, berlaku 10 menit, sekali pakai. Percakapan bot tidak dibuat storyboard karena dikonfigurasi di n8n. | Bagian 2.1 |
+| K-24 | Storyboard UC-09 menunjukkan Petugas diminta menekan Ambil Tiket tanpa melihat masalah dan lokasinya, karena isi Halaman Detail Tiket dan item daftar tidak disebut (S-1). | Isi item daftar Tiket dan Halaman Detail Tiket ditetapkan di konvensi butir 10. Semua isinya berasal dari kelas domain model. | Bagian 7 konvensi; UC-01 L10, UC-09 L2/L4, UC-15 L2 |
+| K-25 | Tombol Ambil Lokasi tidak memberi respons yang terlihat (S-2), padahal setiap aksi pengguna harus punya respons sistem (Rosenberg & Stephens, 2007, Bab 3). | Sistem menampilkan "Lokasi berhasil diambil". Tombol Hapus Foto hanya tampil setelah foto dipilih. | Bagian 7 konvensi; UC-01 L5, UC-18 L7 |
 
 Tidak ada keputusan yang masih terbuka.
 
