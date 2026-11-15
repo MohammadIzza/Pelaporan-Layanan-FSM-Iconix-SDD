@@ -1,16 +1,17 @@
 # Requirement dan Use Case Inti — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 
-**Versi:** draf 3.3 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
+**Versi:** draf 3.4 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
 - Draf 3.1 menindaklanjuti temuan inventaris GUI storyboard T-01 sampai T-21 (K-18 sampai K-23).
 - Draf 3.2 menindaklanjuti tinjauan gambar storyboard percontohan UC-01 dan UC-09 (K-24, K-25).
 - Draf 3.3 menambahkan tombol Kembali (K-26).
+- Draf 3.4 menetapkan isi halaman daftar dan detail selain Tiket (K-27).
 **Tahap ICONIX:** Requirements (Subbab 3.2.2). Belum melalui Milestone 1: Requirements Review.
 
 **Sumber:**
 - `Dokumen_Perencanaan_TA_FSM_UNDIP.md`: FR, NFR, BR, daftar 53 UC, narasi proses bisnis, dan AC FR-AI;
 - `Keputusan_UseCase_Inti_4Nov2026.md`: 9 use case inti awal;
 - naskah skripsi Subbab 1.5, Subbab 3.2, dan Subbab 3.2.1–3.2.9;
-- keputusan peneliti atas K-1 sampai K-26 pada 15 Nov 2026 (Bagian 9);
+- keputusan peneliti atas K-1 sampai K-27 pada 15 Nov 2026 (Bagian 9);
 - temuan inventaris GUI storyboard (T-01 sampai T-21) yang disusun dengan bantuan ChatGPT;
 - domain model [`docs/iconix/domain-model.md`](../iconix/domain-model.md);
 - panduan metode [`docs/metode/panduan-eksperimen.md`](../metode/panduan-eksperimen.md).
@@ -343,6 +344,12 @@ Format mengikuti panduan metode §2.3:
     - Halaman Detail Tiket selalu memuat nomor Tiket, status, Jenis Tiket (atau keterangannya), deskripsi, Lampiran foto dan Lokasi GPS jika ada, Unit Kerja asal, dan waktu dibuat. Tombol dan data tambahan per use case disebut di langkah masing-masing.
 11. Setelah tombol **Ambil Lokasi** berhasil merekam Lokasi GPS, sistem menampilkan keterangan "Lokasi berhasil diambil" (K-25).
 12. Setiap halaman selain Halaman Beranda memiliki tombol **← (Kembali)**. Tombol ini menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim (K-26).
+13. **Isi halaman daftar dan detail selain Tiket (K-27):**
+    - **item Laporan Mandiri** (Halaman Laporan Mandiri Saya, Halaman Verifikasi Laporan Mandiri): nomor, status, jenis pekerjaan, potongan deskripsi, dan waktu mulai atau selesai; di Halaman Verifikasi juga nama Petugas;
+    - **Halaman Detail Laporan Mandiri**: nomor, status, jenis pekerjaan, deskripsi, foto awal, waktu mulai, Hasil Pekerjaan terbaru (catatan, foto hasil, waktu selesai) jika ada, alasan penolakan terakhir jika Reopen, dan riwayat Verifikasi; bagi Atasan juga nama Petugas. Tidak ada Rating dan komentar;
+    - **item Jadwal Rutin** (Halaman Daftar Jadwal Tugas Rutin): nama tugas, pola pengulangan, Area Kerja, jam mulai dan batas waktu, Petugas yang ditugaskan, jumlah Item Checklist, dan kebutuhan bukti;
+    - **item Tugas Rutin** (Halaman Tugas Rutin Hari Ini, Halaman Verifikasi Tugas Rutin): nama tugas, Area Kerja, batas waktu, status, dan tanda Overdue; di Halaman Verifikasi juga nama Petugas dan waktu pengajuan;
+    - **Halaman Detail Tugas Rutin**: isi UC-30 L4, ditambah nama tugas, Area Kerja, dan nama Petugas.
 
 ---
 
@@ -1006,6 +1013,7 @@ Aplikasi hanya diuji pada titik pertukaran datanya. Penjadwalan Tugas Rutin dan 
 | K-24 | Storyboard UC-09 menunjukkan Petugas diminta menekan Ambil Tiket tanpa melihat masalah dan lokasinya, karena isi Halaman Detail Tiket dan item daftar tidak disebut (S-1). | Isi item daftar Tiket dan Halaman Detail Tiket ditetapkan di konvensi butir 10. Semua isinya berasal dari kelas domain model. | Bagian 7 konvensi; UC-01 L10, UC-09 L2/L4, UC-15 L2 |
 | K-25 | Tombol Ambil Lokasi tidak memberi respons yang terlihat (S-2), padahal setiap aksi pengguna harus punya respons sistem (Rosenberg & Stephens, 2007, Bab 3). | Sistem menampilkan "Lokasi berhasil diambil". Tombol Hapus Foto hanya tampil setelah foto dipilih. | Bagian 7 konvensi; UC-01 L5, UC-18 L7 |
 | K-26 | Storyboard mid-fidelity menunjukkan bahwa belum ada cara kembali dari sebuah halaman. | Setiap halaman selain Beranda memiliki tombol ← (Kembali) yang menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim. | Bagian 7 konvensi butir 12 |
+| K-27 | Storyboard UC-16, UC-29, dan tugas rutin membutuhkan isi halaman daftar dan detail Laporan Mandiri, Jadwal Rutin, dan Tugas Rutin, tetapi konvensi butir 10 hanya mengatur Tiket. | Isi halaman ditetapkan di konvensi butir 13, semuanya dari kelas domain model. | Bagian 7 konvensi butir 13; UC-16, UC-29, UC-32, UC-18, UC-30 |
 
 Tidak ada keputusan yang masih terbuka.
 
