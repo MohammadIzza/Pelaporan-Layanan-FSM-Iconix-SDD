@@ -1034,7 +1034,7 @@ Tidak ada keputusan yang masih terbuka.
 
 ## 11. Langkah Berikutnya (sesuai ICONIX)
 
-1. ~~Buat GUI storyboard~~ **Selesai untuk 10 use case:** [`docs/iconix/storyboard/`](../iconix/storyboard/), dengan file sumber FigCraft `storyboard.figcraft` dan satu PNG per proses bisnis. Halaman Masuk dan Halaman Profil (fungsi pendukung) belum digambar. Daftar halaman yang dirujuk teks use case (20 halaman, ditambah Halaman Masuk):
+1. ~~Buat GUI storyboard~~ **Selesai untuk 10 use case:** [`docs/iconix/storyboard/`](../iconix/storyboard/), dengan file sumber FigCraft `storyboard.figcraft` dan satu PNG per proses bisnis. Halaman Masuk dan Halaman Profil (fungsi pendukung) digambar di zona tersendiri. Elemen yang belum ditetapkan requirement ditandai [USULAN] untuk diputuskan saat Requirements Review: jenis kredensial login, pesan login gagal, isi data profil, dan teks petunjuk kode penautan. Daftar halaman yang dirujuk teks use case (20 halaman, ditambah Halaman Masuk):
    - navigasi: Beranda, Tiket Saya, Laporan Mandiri Saya, Profil;
    - permintaan layanan: Buat Permintaan Layanan, Detail Tiket, Klasifikasi Tiket, Antrean Tiket;
    - formulir bersama: Formulir Penyelesaian, Formulir Penilaian, Formulir Penolakan;
