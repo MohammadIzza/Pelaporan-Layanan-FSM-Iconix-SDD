@@ -2,7 +2,7 @@
 
 **Tahap ICONIX:** Requirements (Subbab 3.2.2, aktivitas 3). Belum melalui Milestone 1: Requirements Review.
 **Sumber:** kata benda pada teks use case [`docs/requirements/use-case-inti.md`](../requirements/use-case-inti.md) (awalnya draf 2, diselaraskan sampai draf 3.6).
-**Diagram:** [`domain-model.puml`](domain-model.puml) adalah sumber teks (isi kelas dan relasi, juga untuk dibaca agen AI). [`domain-model.png`](domain-model.png) digambar dengan tata letak tetap oleh [`domain-model-layout.py`](domain-model-layout.py) supaya garis tidak saling menimpa. Isi keduanya harus selalu sama; bila relasi berubah, perbarui keduanya.
+**Diagram:** [`domain-model.puml`](domain-model.puml) adalah sumber teks (isi kelas dan relasi, juga untuk dibaca agen AI). [`domain-model.png`](domain-model.png) digambar dengan garis lurus dan posisi tetap oleh [`domain-model-layout.py`](domain-model-layout.py) supaya tidak ada garis yang menembus kotak atau label yang tertimpa. Isi keduanya harus selalu sama; bila relasi berubah, perbarui keduanya.
 
 ![Domain model awal](domain-model.png)
 
@@ -75,4 +75,4 @@ Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis d
 | 5 | Atasan yang ditunjuk (K-13) | Dimodelkan sebagai salah satu `Peran`. | — |
 | 6 | Cara penggambaran | Mengikuti pedoman Rosenberg & Stephens (2007, Bab 2): tanpa multiplisitas, tanpa kelas abstrak, dan tanpa kotak paket. | `Pekerjaan` menjadi kelas biasa. |
 | 7 | Lokasi dan foto awal (15 Nov 2026, setelah K-18 dan K-29) | Lokasi digambar sekali sebagai `Pekerjaan → AreaKerja` karena berlaku untuk Tiket, Laporan Mandiri, dan Tugas Rutin (generalisasi). Foto awal Laporan Mandiri digambar sebagai `LaporanMandiri ◇ Lampiran`. | Menggantikan relasi lokasi terpisah pada Tiket dan Laporan Mandiri. |
-| 8 | Kerapian diagram | Tata letak tetap empat baris: organisasi dan pengguna, pekerjaan, jenis pekerjaan, lalu kelas pendukung. Semua garis siku, dan persilangan ditandai lengkung kecil (`domain-model-layout.py`). Peran "dibuat oleh" dan "petugas ditugaskan" dari JadwalRutin ke Pengguna digambar dalam satu garis berlabel dua. | Isi kelas tidak berubah. |
+| 8 | Kerapian diagram | Garis lurus seperti contoh Rosenberg & Stephens (2007, Figure 2-1 dan 2-7), dengan semua relasi tetap ditampilkan. Posisi kotak dicari agar tidak ada garis yang menembus kotak (13 persilangan tersisa), setiap garis punya titik sambung sendiri, dan label tidak menimpa garis lain (`domain-model-layout.py`). | Isi kelas tidak berubah. |
