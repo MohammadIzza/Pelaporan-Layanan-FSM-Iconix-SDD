@@ -1,13 +1,16 @@
 # Requirement dan Use Case Inti — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 
-**Versi:** draf 3.2 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini. Draf 3.1 menindaklanjuti temuan inventaris GUI storyboard T-01 sampai T-21 (K-18 sampai K-23). Draf 3.2 menindaklanjuti tinjauan gambar storyboard percontohan UC-01 dan UC-09 (K-24, K-25).
+**Versi:** draf 3.3 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
+- Draf 3.1 menindaklanjuti temuan inventaris GUI storyboard T-01 sampai T-21 (K-18 sampai K-23).
+- Draf 3.2 menindaklanjuti tinjauan gambar storyboard percontohan UC-01 dan UC-09 (K-24, K-25).
+- Draf 3.3 menambahkan tombol Kembali (K-26).
 **Tahap ICONIX:** Requirements (Subbab 3.2.2). Belum melalui Milestone 1: Requirements Review.
 
 **Sumber:**
 - `Dokumen_Perencanaan_TA_FSM_UNDIP.md`: FR, NFR, BR, daftar 53 UC, narasi proses bisnis, dan AC FR-AI;
 - `Keputusan_UseCase_Inti_4Nov2026.md`: 9 use case inti awal;
 - naskah skripsi Subbab 1.5, Subbab 3.2, dan Subbab 3.2.1–3.2.9;
-- keputusan peneliti atas K-1 sampai K-25 pada 15 Nov 2026 (Bagian 9);
+- keputusan peneliti atas K-1 sampai K-26 pada 15 Nov 2026 (Bagian 9);
 - temuan inventaris GUI storyboard (T-01 sampai T-21) yang disusun dengan bantuan ChatGPT;
 - domain model [`docs/iconix/domain-model.md`](../iconix/domain-model.md);
 - panduan metode [`docs/metode/panduan-eksperimen.md`](../metode/panduan-eksperimen.md).
@@ -339,6 +342,7 @@ Format mengikuti panduan metode §2.3:
     - setiap item Tiket di Halaman Antrean Tiket, Halaman Tiket Saya, dan Halaman Klasifikasi Tiket memuat nomor Tiket, Jenis Tiket (atau keterangan "Sedang diklasifikasi"/"Belum terklasifikasi"), potongan deskripsi, status, dan waktu dibuat;
     - Halaman Detail Tiket selalu memuat nomor Tiket, status, Jenis Tiket (atau keterangannya), deskripsi, Lampiran foto dan Lokasi GPS jika ada, Unit Kerja asal, dan waktu dibuat. Tombol dan data tambahan per use case disebut di langkah masing-masing.
 11. Setelah tombol **Ambil Lokasi** berhasil merekam Lokasi GPS, sistem menampilkan keterangan "Lokasi berhasil diambil" (K-25).
+12. Setiap halaman selain Halaman Beranda memiliki tombol **← (Kembali)**. Tombol ini menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim (K-26).
 
 ---
 
@@ -1001,6 +1005,7 @@ Aplikasi hanya diuji pada titik pertukaran datanya. Penjadwalan Tugas Rutin dan 
 | K-23 | Label menu bot dan ketentuan kode penautan belum ditetapkan (T-15–T-17). | Menu bot: Laporan, Laporan Mandiri, Tiket, Tugas Rutin. Kode penautan 6 digit, berlaku 10 menit, sekali pakai. Percakapan bot tidak dibuat storyboard karena dikonfigurasi di n8n. | Bagian 2.1 |
 | K-24 | Storyboard UC-09 menunjukkan Petugas diminta menekan Ambil Tiket tanpa melihat masalah dan lokasinya, karena isi Halaman Detail Tiket dan item daftar tidak disebut (S-1). | Isi item daftar Tiket dan Halaman Detail Tiket ditetapkan di konvensi butir 10. Semua isinya berasal dari kelas domain model. | Bagian 7 konvensi; UC-01 L10, UC-09 L2/L4, UC-15 L2 |
 | K-25 | Tombol Ambil Lokasi tidak memberi respons yang terlihat (S-2), padahal setiap aksi pengguna harus punya respons sistem (Rosenberg & Stephens, 2007, Bab 3). | Sistem menampilkan "Lokasi berhasil diambil". Tombol Hapus Foto hanya tampil setelah foto dipilih. | Bagian 7 konvensi; UC-01 L5, UC-18 L7 |
+| K-26 | Storyboard mid-fidelity menunjukkan bahwa belum ada cara kembali dari sebuah halaman. | Setiap halaman selain Beranda memiliki tombol ← (Kembali) yang menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim. | Bagian 7 konvensi butir 12 |
 
 Tidak ada keputusan yang masih terbuka.
 
