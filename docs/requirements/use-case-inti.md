@@ -1,18 +1,19 @@
 # Requirement dan Use Case Inti — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 
-**Versi:** draf 3.5 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
+**Versi:** draf 3.6 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
 - Draf 3.1 menindaklanjuti temuan inventaris GUI storyboard T-01 sampai T-21 (K-18 sampai K-23).
 - Draf 3.2 menindaklanjuti tinjauan gambar storyboard percontohan UC-01 dan UC-09 (K-24, K-25).
 - Draf 3.3 menambahkan tombol Kembali (K-26).
 - Draf 3.4 menetapkan isi halaman daftar dan detail selain Tiket (K-27).
 - Draf 3.5 menambahkan AC untuk alternate "daftar kosong" yang belum punya AC (K-28).
+- Draf 3.6 menambahkan lokasi gedung/area dan detail lokasi di formulir laporan (K-29).
 **Tahap ICONIX:** Requirements (Subbab 3.2.2). Belum melalui Milestone 1: Requirements Review.
 
 **Sumber:**
 - `Dokumen_Perencanaan_TA_FSM_UNDIP.md`: FR, NFR, BR, daftar 53 UC, narasi proses bisnis, dan AC FR-AI;
 - `Keputusan_UseCase_Inti_4Nov2026.md`: 9 use case inti awal;
 - naskah skripsi Subbab 1.5, Subbab 3.2, dan Subbab 3.2.1–3.2.9;
-- keputusan peneliti atas K-1 sampai K-28 pada 15 Nov 2026 (Bagian 9);
+- keputusan peneliti atas K-1 sampai K-29 pada 15 Nov 2026 (Bagian 9);
 - temuan inventaris GUI storyboard (T-01 sampai T-21) yang disusun dengan bantuan ChatGPT;
 - domain model [`docs/iconix/domain-model.md`](../iconix/domain-model.md);
 - panduan metode [`docs/metode/panduan-eksperimen.md`](../metode/panduan-eksperimen.md).
@@ -214,6 +215,7 @@ ID dipertahankan dari dokumen perencanaan. FR lain di luar tabel ini tetap terca
 | FR-TKT-002 | Unit asal Tiket diambil dari konteks organisasi aktif Pelapor. | UC-01 |
 | FR-TKT-003 | Sistem mengumpulkan deskripsi laporan. | UC-01 |
 | FR-TKT-005 | Sistem mendukung foto dan GPS. Unggahan file selain foto tidak dibangun (K-19). | UC-01 |
+| FR-TKT-100 | Sistem mengumpulkan lokasi laporan berupa Area Kerja (gedung dan lantai) dan detail lokasi. ID baru (K-29). | UC-01, UC-16 |
 | FR-TKT-006 | Sistem mengirim Tiket ke antrean yang sesuai. | PS-01, UC-54 |
 | FR-TKT-007 | Sistem menampilkan Tiket kepada SPV yang berwenang. | UC-54 |
 | FR-TKT-008 | Sistem mendukung claim mandiri. | UC-09 |
@@ -341,13 +343,13 @@ Format mengikuti panduan metode §2.3:
 8. Semua pesan ditulis apa adanya dalam tanda kutip. Pesan yang sama dipakai di halaman web dan dikembalikan oleh endpoint.
 9. Alternate yang menyembunyikan menu, tombol, atau data dan menolak permintaan lewat endpoint tidak memiliki halaman error tersendiri.
 10. **Isi Tiket pada halaman daftar dan detail (K-24):**
-    - setiap item Tiket di Halaman Antrean Tiket, Halaman Tiket Saya, dan Halaman Klasifikasi Tiket memuat nomor Tiket, Jenis Tiket (atau keterangan "Sedang diklasifikasi"/"Belum terklasifikasi"), potongan deskripsi, status, dan waktu dibuat;
-    - Halaman Detail Tiket selalu memuat nomor Tiket, status, Jenis Tiket (atau keterangannya), deskripsi, Lampiran foto dan Lokasi GPS jika ada, Unit Kerja asal, dan waktu dibuat. Tombol dan data tambahan per use case disebut di langkah masing-masing.
+    - setiap item Tiket di Halaman Antrean Tiket, Halaman Tiket Saya, dan Halaman Klasifikasi Tiket memuat nomor Tiket, Jenis Tiket (atau keterangan "Sedang diklasifikasi"/"Belum terklasifikasi"), Area Kerja, potongan deskripsi, status, dan waktu dibuat;
+    - Halaman Detail Tiket selalu memuat nomor Tiket, status, Jenis Tiket (atau keterangannya), deskripsi, lokasi (Area Kerja dan detail lokasi), Lampiran foto dan Lokasi GPS jika ada, Unit Kerja asal, dan waktu dibuat. Tombol dan data tambahan per use case disebut di langkah masing-masing.
 11. Setelah tombol **Ambil Lokasi** berhasil merekam Lokasi GPS, sistem menampilkan keterangan "Lokasi berhasil diambil" (K-25).
 12. Setiap halaman selain Halaman Beranda memiliki tombol **← (Kembali)**. Tombol ini menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim (K-26).
 13. **Isi halaman daftar dan detail selain Tiket (K-27):**
-    - **item Laporan Mandiri** (Halaman Laporan Mandiri Saya, Halaman Verifikasi Laporan Mandiri): nomor, status, jenis pekerjaan, potongan deskripsi, dan waktu mulai atau selesai; di Halaman Verifikasi juga nama Petugas;
-    - **Halaman Detail Laporan Mandiri**: nomor, status, jenis pekerjaan, deskripsi, foto awal, waktu mulai, Hasil Pekerjaan terbaru (catatan, foto hasil, waktu selesai) jika ada, alasan penolakan terakhir jika Reopen, dan riwayat Verifikasi; bagi Atasan juga nama Petugas. Tidak ada Rating dan komentar;
+    - **item Laporan Mandiri** (Halaman Laporan Mandiri Saya, Halaman Verifikasi Laporan Mandiri): nomor, status, jenis pekerjaan, Area Kerja, potongan deskripsi, dan waktu mulai atau selesai; di Halaman Verifikasi juga nama Petugas;
+    - **Halaman Detail Laporan Mandiri**: nomor, status, jenis pekerjaan, deskripsi, lokasi (Area Kerja dan detail lokasi), foto awal, waktu mulai, Hasil Pekerjaan terbaru (catatan, foto hasil, waktu selesai) jika ada, alasan penolakan terakhir jika Reopen, dan riwayat Verifikasi; bagi Atasan juga nama Petugas. Tidak ada Rating dan komentar;
     - **item Jadwal Rutin** (Halaman Daftar Jadwal Tugas Rutin): nama tugas, pola pengulangan, Area Kerja, jam mulai dan batas waktu, Petugas yang ditugaskan, jumlah Item Checklist, dan kebutuhan bukti;
     - **item Tugas Rutin** (Halaman Tugas Rutin Hari Ini, Halaman Verifikasi Tugas Rutin): nama tugas, Area Kerja, batas waktu, status, dan tanda Overdue; di Halaman Verifikasi juga nama Petugas dan waktu pengajuan;
     - **Halaman Detail Tugas Rutin**: isi UC-30 L4, ditambah nama tugas, Area Kerja, dan nama Petugas.
@@ -359,18 +361,18 @@ Format mengikuti panduan metode §2.3:
 | | |
 |---|---|
 | Aktor | Pelapor (utama); n8n (sekunder, melalui PS-01) |
-| Requirement | FR-AUTH-001, FR-TKT-001/002/003/005/011, FR-AUD-001/006, NFR-USE-001, NFR-REL-001, NFR-PWA-003 |
+| Requirement | FR-AUTH-001, FR-TKT-001/002/003/005/011/100, FR-AUD-001/006, NFR-USE-001, NFR-REL-001, NFR-PWA-003 |
 | Prasyarat | Pelapor sudah masuk dan berstatus aktif. |
 
 **Basic course**
 1. Pelapor memilih menu Buat Permintaan Layanan.
-2. Sistem menampilkan Halaman Buat Permintaan Layanan berisi kolom deskripsi, unggahan foto, tombol Ambil Lokasi, dan tombol Kirim.
-3. Pelapor menulis deskripsi masalah.
+2. Sistem menampilkan Halaman Buat Permintaan Layanan berisi kolom deskripsi, pilihan Area Kerja, kolom detail lokasi, unggahan foto, tombol Ambil Lokasi, dan tombol Kirim.
+3. Pelapor menulis deskripsi masalah, memilih Area Kerja tempat masalah berada, dan dapat menulis detail lokasi, misalnya nama ruang (K-29).
 4. Pelapor melampirkan satu foto (opsional).
 5. Pelapor menekan tombol Ambil Lokasi (opsional), lalu sistem merekam Lokasi GPS saat itu dan menampilkan keterangan "Lokasi berhasil diambil".
 6. Pelapor menekan tombol Kirim.
-7. Sistem memeriksa bahwa deskripsi terisi dan, jika ada foto, foto memenuhi BR-100.
-8. Sistem menyimpan Tiket berstatus Open, mengisi Unit Kerja asal dari konteks organisasi Pelapor, menyimpan Lampiran dan Lokasi GPS, lalu mencatat Timeline Event pembuatan Tiket beserta pelaku dan waktunya.
+7. Sistem memeriksa bahwa deskripsi dan Area Kerja terisi dan, jika ada foto, foto memenuhi BR-100.
+8. Sistem menyimpan Tiket berstatus Open, mengisi Unit Kerja asal dari konteks organisasi Pelapor, menyimpan Area Kerja, detail lokasi, Lampiran, dan Lokasi GPS, lalu mencatat Timeline Event pembuatan Tiket beserta pelaku dan waktunya.
 9. Sistem menjalankan **PS-01 Klasifikasikan Tiket** di latar belakang tanpa menunggu hasilnya (K-10).
 10. Sistem menampilkan Halaman Detail Tiket (isi sesuai konvensi butir 10) dengan status Open dan keterangan "Sedang diklasifikasi", serta pesan "Permintaan layanan berhasil dikirim".
 
@@ -379,7 +381,8 @@ Format mengikuti panduan metode §2.3:
 - **A2 (langkah 7) Foto tidak memenuhi BR-100:** Sistem menampilkan pesan "Foto harus berformat JPG atau PNG dengan ukuran maksimal 5 MB" dan tidak menyimpan Tiket sampai Pelapor menekan Hapus Foto atau memilih foto lain.
 - **A3 (langkah 5) Izin lokasi ditolak atau GPS tidak tersedia:** Sistem menampilkan pesan "Lokasi tidak tersedia. Laporan tetap dapat dikirim tanpa lokasi." Pelapor tetap dapat menekan tombol Kirim tanpa Lokasi GPS.
 - **A4 (langkah 9) PS-01 gagal:** Sistem menandai Tiket "Belum terklasifikasi" dan menampilkannya di Halaman Klasifikasi Tiket milik Atasan yang ditunjuk (UC-54). Tiket tetap berstatus Open.
-- **A5 Jalur Telegram (K-12):** Pelapor memilih menu Laporan di bot Telegram, lalu mengirim deskripsi, foto, dan lokasi (opsional). n8n memanggil endpoint pembuatan Tiket, dan sistem menjalankan langkah 7–9. Bot membalas nomor Tiket dan status Open. Jika Akun Telegram belum ditautkan (K-11), sistem menolak permintaan dan tidak menyimpan Tiket.
+- **A5 Jalur Telegram (K-12):** Pelapor memilih menu Laporan di bot Telegram, memilih Area Kerja dari daftar, lalu mengirim deskripsi, detail lokasi, foto, dan lokasi GPS (opsional). n8n memanggil endpoint pembuatan Tiket, dan sistem menjalankan langkah 7–9. Bot membalas nomor Tiket dan status Open. Jika Akun Telegram belum ditautkan (K-11), sistem menolak permintaan dan tidak menyimpan Tiket.
+- **A6 (langkah 7) Area Kerja belum dipilih (K-29):** Sistem menampilkan pesan "Lokasi wajib diisi" di Halaman Buat Permintaan Layanan dan tidak menyimpan Tiket.
 
 **Postcondition**
 - Berhasil: Tiket tersimpan berstatus Open dengan Unit Kerja asal Pelapor, Timeline Event pembuatan tercatat, dan PS-01 sudah dijalankan.
@@ -395,8 +398,9 @@ Format mengikuti panduan metode §2.3:
 - **AC-01-5:** **Given** n8n tidak merespons, **When** Pelapor mengirim formulir yang valid, **Then** sistem tetap menyimpan Tiket berstatus Open, menandainya "Belum terklasifikasi", dan menampilkannya di Halaman Klasifikasi Tiket (BR-003).
 - **AC-01-6:** **Given** Tiket sudah tersimpan, **When** Pelapor membuka Halaman Detail Tiket, **Then** sistem tidak menampilkan aksi pembatalan, dan sistem menolak permintaan pembatalan lewat endpoint (BR-018).
 - **AC-01-7:** **Given** Akun Telegram Pelapor sudah ditautkan, **When** n8n memanggil endpoint pembuatan Tiket dengan deskripsi terisi, **Then** sistem menyimpan Tiket berstatus Open atas nama pemilik akun tersebut. **Given** akun belum ditautkan, **Then** sistem menolak permintaan dan tidak menyimpan Tiket.
+- **AC-01-8:** **Given** Area Kerja belum dipilih, **When** Pelapor menekan Kirim, **Then** sistem menampilkan pesan "Lokasi wajib diisi" dan tidak menyimpan Tiket baru (K-29).
 
-Skenario uji minimal: 6.
+Skenario uji minimal: 7.
 
 ---
 
@@ -409,7 +413,7 @@ Skenario uji minimal: 6.
 | Requirement | FR-AI-001/002/003/004/005/008, FR-TKT-006, NFR-REL-001/002/003, NFR-SEC-006 |
 
 **Alur utama**
-1. Sistem mengirim nomor Tiket, deskripsi, Lampiran foto (jika ada), dan daftar Jenis Tiket aktif ke webhook n8n.
+1. Sistem mengirim nomor Tiket, deskripsi, Area Kerja dan detail lokasi, Lampiran foto (jika ada), dan daftar Jenis Tiket aktif ke webhook n8n.
 2. n8n mengembalikan Jenis Tiket yang paling sesuai beserta confidence score.
 3. Sistem memeriksa bahwa Jenis Tiket yang diterima termasuk Jenis Tiket aktif.
 4. Sistem menyimpan Klasifikasi bersumber "AI" berisi Jenis Tiket, confidence score, dan waktu.
@@ -634,16 +638,16 @@ Skenario uji minimal: 6.
 | | |
 |---|---|
 | Aktor | Petugas |
-| Requirement | FR-SELF-001/002/003/008/009, FR-WRK-001/002/009/010, FR-AUD-001/006 |
+| Requirement | FR-SELF-001/002/003/008/009, FR-WRK-001/002/009/010, FR-TKT-100, FR-AUD-001/006 |
 | Prasyarat | Petugas sudah masuk dan memiliki Atasan pada struktur organisasi (data awal). |
 
 **Basic course**
 1. Petugas memilih menu Buat Laporan Mandiri.
-2. Sistem menampilkan Halaman Buat Laporan Mandiri berisi pilihan jenis pekerjaan, kolom deskripsi, unggahan foto awal (kondisi sebelum dikerjakan), dan tombol Mulai Pengerjaan. Pilihan jenis pekerjaan hanya memuat Jenis Tiket yang membutuhkan Skill Petugas (K-4).
-3. Petugas memilih jenis pekerjaan, menulis deskripsi, melampirkan satu foto awal (K-18), lalu menekan tombol Mulai Pengerjaan (K-1).
-4. Sistem memeriksa bahwa jenis pekerjaan dan deskripsi terisi, dan jenis pekerjaan membutuhkan salah satu Skill Petugas.
+2. Sistem menampilkan Halaman Buat Laporan Mandiri berisi pilihan jenis pekerjaan, kolom deskripsi, pilihan Area Kerja, kolom detail lokasi, unggahan foto awal (kondisi sebelum dikerjakan), dan tombol Mulai Pengerjaan. Pilihan jenis pekerjaan hanya memuat Jenis Tiket yang membutuhkan Skill Petugas (K-4).
+3. Petugas memilih jenis pekerjaan, menulis deskripsi, memilih Area Kerja dan dapat menulis detail lokasi (K-29), melampirkan satu foto awal (K-18), lalu menekan tombol Mulai Pengerjaan (K-1).
+4. Sistem memeriksa bahwa jenis pekerjaan, deskripsi, dan Area Kerja terisi, dan jenis pekerjaan membutuhkan salah satu Skill Petugas.
 5. Sistem memeriksa bahwa foto awal terisi dan memenuhi BR-100.
-6. Sistem menyimpan Laporan Mandiri beserta Lampiran foto awal, menetapkan Petugas sebagai primary assignee, mencatat waktu mulai, mengubah status menjadi In Progress, dan mencatat Timeline Event.
+6. Sistem menyimpan Laporan Mandiri beserta Area Kerja, detail lokasi, dan Lampiran foto awal, menetapkan Petugas sebagai primary assignee, mencatat waktu mulai, mengubah status menjadi In Progress, dan mencatat Timeline Event.
 7. Sistem menampilkan Halaman Detail Laporan Mandiri berstatus In Progress dengan tombol Selesai Dikerjakan.
 8. Setelah pekerjaan selesai, Petugas menekan tombol Selesai Dikerjakan.
 9. Sistem menampilkan Formulir Penyelesaian.
@@ -653,10 +657,10 @@ Skenario uji minimal: 6.
 13. Sistem menampilkan Halaman Detail Laporan Mandiri berstatus Menunggu Verifikasi dengan pesan "Laporan Mandiri berhasil dikirim untuk diverifikasi".
 
 **Alternate courses**
-- **A1 (langkah 4) Jenis pekerjaan atau deskripsi kosong, atau jenis pekerjaan tidak membutuhkan Skill Petugas:** Sistem menampilkan pesan "Jenis pekerjaan dan deskripsi wajib diisi" dan tidak menyimpan Laporan Mandiri. Jenis pekerjaan di luar Skill hanya dapat dikirim lewat endpoint, dan sistem menolaknya.
+- **A1 (langkah 4) Jenis pekerjaan, deskripsi, atau Area Kerja kosong, atau jenis pekerjaan tidak membutuhkan Skill Petugas:** Sistem menampilkan pesan "Jenis pekerjaan, deskripsi, dan lokasi wajib diisi" dan tidak menyimpan Laporan Mandiri. Jenis pekerjaan di luar Skill hanya dapat dikirim lewat endpoint, dan sistem menolaknya.
 - **A2 (langkah 11) Catatan atau foto hasil kosong, atau foto tidak memenuhi BR-100:** Sistem menampilkan pesan "Catatan dan foto hasil wajib diisi" atau "Foto harus berformat JPG atau PNG dengan ukuran maksimal 5 MB", dan status tetap In Progress.
 - **A3 (prasyarat) Laporan dikembalikan Atasan (Reopen dari UC-29, K-5):** Petugas memilih Laporan Mandiri berstatus Reopen di Halaman Laporan Mandiri Saya. Sistem menampilkan Halaman Detail Laporan Mandiri beserta alasan penolakan. Petugas menjalankan langkah 8–13 lagi, dan sistem tetap menyimpan Hasil Pekerjaan sebelumnya.
-- **A4 Jalur Telegram:** Petugas memilih menu Laporan Mandiri di bot Telegram, dan bot menampilkan jenis pekerjaan sesuai Skill Petugas. Petugas mengirim deskripsi dan foto awal untuk memulai, lalu catatan dan foto hasil untuk menyelesaikan. n8n memanggil endpoint yang sama, dan sistem menjalankan langkah 4–6 dan 11–12.
+- **A4 Jalur Telegram:** Petugas memilih menu Laporan Mandiri di bot Telegram, dan bot menampilkan jenis pekerjaan sesuai Skill Petugas. Petugas memilih Area Kerja, lalu mengirim deskripsi, detail lokasi, dan foto awal untuk memulai, lalu catatan dan foto hasil untuk menyelesaikan. n8n memanggil endpoint yang sama, dan sistem menjalankan langkah 4–6 dan 11–12.
 - **A5 (langkah 5) Foto awal kosong atau tidak memenuhi BR-100 (K-18):** Sistem menampilkan pesan "Foto awal wajib diisi" atau "Foto harus berformat JPG atau PNG dengan ukuran maksimal 5 MB", dan tidak menyimpan Laporan Mandiri.
 
 **Postcondition**
@@ -674,7 +678,7 @@ Catatan: laporan retrospektif (UC-17) tidak dibangun.
 **Acceptance criteria**
 - **AC-16-1:** **Given** Petugas aktif, **When** ia mengisi jenis pekerjaan, deskripsi, dan foto awal lalu menekan Mulai Pengerjaan, **Then** sistem menyimpan Laporan Mandiri berstatus In Progress beserta foto awal, menetapkan Petugas sebagai primary assignee, dan mencatat waktu mulai.
 - **AC-16-2:** **Given** Laporan Mandiri In Progress, **When** Petugas mengirim catatan dan foto hasil, **Then** sistem mengubah status menjadi Menunggu Verifikasi dan menampilkan laporan di Halaman Verifikasi Laporan Mandiri milik Atasan langsungnya.
-- **AC-16-3:** **Given** kolom wajib kosong, atau jenis pekerjaan yang dikirim ke endpoint tidak membutuhkan Skill Petugas, **When** Petugas menekan Mulai Pengerjaan, **Then** sistem menampilkan pesan "Jenis pekerjaan dan deskripsi wajib diisi" atau menolak permintaan endpoint, dan tidak menyimpan Laporan Mandiri.
+- **AC-16-3:** **Given** kolom wajib kosong, atau jenis pekerjaan yang dikirim ke endpoint tidak membutuhkan Skill Petugas, **When** Petugas menekan Mulai Pengerjaan, **Then** sistem menampilkan pesan "Jenis pekerjaan, deskripsi, dan lokasi wajib diisi" atau menolak permintaan endpoint, dan tidak menyimpan Laporan Mandiri.
 - **AC-16-4:** **Given** catatan atau foto hasil kosong, **When** Petugas menekan Kirim, **Then** sistem menampilkan pesan "Catatan dan foto hasil wajib diisi" dan tidak mengubah status.
 - **AC-16-5:** **Given** Laporan Mandiri, **When** detailnya dibuka, **Then** sistem tidak menampilkan kolom Rating maupun komentar (FR-SELF-008/009).
 - **AC-16-6:** **Given** Laporan Mandiri berstatus Reopen dengan alasan dari Atasan, **When** Petugas menyelesaikannya lagi, **Then** sistem mengubah status menjadi Menunggu Verifikasi dan tetap menyimpan Hasil Pekerjaan sebelumnya.
@@ -697,7 +701,7 @@ Skenario uji minimal: 6.
 1. Atasan memilih menu Verifikasi Laporan Mandiri.
 2. Sistem menampilkan Halaman Verifikasi Laporan Mandiri berisi Laporan Mandiri berstatus Menunggu Verifikasi milik bawahan Atasan tersebut.
 3. Atasan memilih satu Laporan Mandiri.
-4. Sistem menampilkan Halaman Detail Laporan Mandiri berisi deskripsi, foto awal, Hasil Pekerjaan terbaru (catatan dan foto hasil), waktu mulai dan selesai, riwayat Verifikasi sebelumnya, serta tombol Setujui dan Tolak.
+4. Sistem menampilkan Halaman Detail Laporan Mandiri berisi deskripsi, lokasi (Area Kerja dan detail lokasi), foto awal, Hasil Pekerjaan terbaru (catatan dan foto hasil), waktu mulai dan selesai, riwayat Verifikasi sebelumnya, serta tombol Setujui dan Tolak.
 5. Atasan menekan tombol Setujui.
 6. Sistem menyimpan Verifikasi "disetujui" dengan Atasan sebagai verifikator.
 7. Sistem mengubah status Laporan Mandiri menjadi Closed dan mencatat Timeline Event.
@@ -930,7 +934,7 @@ Skenario uji minimal: 5.
 
 | ID | Basic/alur utama | Alternate | Minimal skenario uji |
 |---|---|---|---|
-| UC-01 | 1 | 5 (termasuk Telegram) | 6 |
+| UC-01 | 1 | 6 (termasuk Telegram) | 7 |
 | PS-01 | 1 | 3 | 4 |
 | UC-54 | 1 | 4 | 5 |
 | UC-09 | 1 | 4 (termasuk Telegram) + 1 uji claim bersamaan | 6 |
@@ -943,7 +947,7 @@ Skenario uji minimal: 5.
 | UC-18 | 1 | 7 (termasuk Telegram) | 8 |
 | PS-03 | 1 | 1 | 2 |
 | UC-30 | 1 | 4 | 5 |
-| **Total** | | | **64** |
+| **Total** | | | **65** |
 
 ---
 
@@ -955,7 +959,7 @@ Skenario uji minimal: 5.
 - Skill Petugas;
 - Jenis Tiket beserta Skill-nya;
 - Unit Kerja;
-- Area Kerja untuk Tugas Rutin;
+- Area Kerja (gedung dan lantai) untuk lokasi Tiket, Laporan Mandiri, dan Tugas Rutin (K-29);
 - Atasan yang ditunjuk sebagai pengklasifikasi Tiket.
 
 **Use case yang tidak dibangun** (tetap dicatat dan menjadi bahan saran BAB V):
@@ -1020,6 +1024,7 @@ Aplikasi hanya diuji pada titik pertukaran datanya. Penjadwalan Tugas Rutin dan 
 | K-26 | Storyboard mid-fidelity menunjukkan bahwa belum ada cara kembali dari sebuah halaman. | Setiap halaman selain Beranda memiliki tombol ← (Kembali) yang menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim. | Bagian 7 konvensi butir 12 |
 | K-27 | Storyboard UC-16, UC-29, dan tugas rutin membutuhkan isi halaman daftar dan detail Laporan Mandiri, Jadwal Rutin, dan Tugas Rutin, tetapi konvensi butir 10 hanya mengatur Tiket. | Isi halaman ditetapkan di konvensi butir 13, semuanya dari kelas domain model. | Bagian 7 konvensi butir 13; UC-16, UC-29, UC-32, UC-18, UC-30 |
 | K-28 | Pemetaan flow prototype ke AC menunjukkan empat alternate "daftar kosong" belum punya acceptance criteria, padahal sudah dihitung sebagai skenario uji (Martinelli, 2026: setiap alur harus punya kriteria yang dapat diuji). | Ditambahkan AC-54-6 (UC-54 A3), AC-29-5 (UC-29 A3), AC-18-9 (UC-18 A4), dan AC-30-5 (UC-30 A3). Jumlah skenario uji minimal tidak berubah (64). | UC-54, UC-29, UC-18, UC-30 |
+| K-29 | Formulir laporan hanya punya Lokasi GPS opsional, padahal petugas perlu tahu tempat masalah dengan jelas (masukan peneliti saat persiapan Requirements Review). | Formulir UC-01 dan UC-16 memuat **pilihan Area Kerja (wajib)** dari data awal dan **kolom detail lokasi (opsional)**, misalnya nama ruang. GPS tetap opsional. Ditambah FR-TKT-100, UC-01 A6, dan AC-01-8; pesan UC-16 A1 diperbarui. Skenario uji minimal menjadi 65. | Bagian 1, 4, 7 (konvensi 10 dan 13); UC-01, PS-01, UC-16, UC-29 |
 
 Tidak ada keputusan yang masih terbuka.
 

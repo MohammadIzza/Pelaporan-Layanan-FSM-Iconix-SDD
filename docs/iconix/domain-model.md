@@ -60,7 +60,7 @@ Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis d
 | Kelas | Arti | Use case |
 |---|---|---|
 | JadwalRutin | Jadwal yang dibuat atasan: nama tugas, pola pengulangan, jam mulai, batas waktu, kebutuhan bukti, dan petugas yang ditugaskan. | UC-32 |
-| AreaKerja | Area tempat tugas rutin dikerjakan, misalnya gedung atau lantai tertentu. Disiapkan sebagai data awal dan dipilih atasan saat membuat jadwal. | UC-32, UC-18 |
+| AreaKerja | Gedung dan lantai tertentu (misalnya "Gedung E · Lantai 1") yang menjadi lokasi Tiket, Laporan Mandiri, dan Tugas Rutin. Disiapkan sebagai data awal; dipilih Pelapor atau Petugas di formulir laporan (wajib, K-29) dan dipilih Atasan saat membuat jadwal. Detail lokasi (misalnya nama ruang) adalah isian teks, bukan kelas. | UC-01, UC-16, UC-32, UC-18 |
 | ItemChecklist | Butir pekerjaan dalam jadwal rutin, bertanda wajib atau opsional. | UC-32, UC-18 |
 | HasilChecklist | Status centang satu item checklist pada satu pengajuan tugas rutin. | UC-18, UC-30 |
 

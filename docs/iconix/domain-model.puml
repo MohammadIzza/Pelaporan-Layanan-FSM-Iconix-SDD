@@ -64,6 +64,7 @@ HasilPekerjaan o-- LokasiGPS
 ' --- Permintaan layanan (tiket) ---
 Tiket --> Pengguna : pelapor
 Tiket --> UnitKerja : unit asal
+Tiket --> AreaKerja : lokasi
 Tiket --> JenisTiket
 Tiket o-- Lampiran
 Tiket o-- LokasiGPS
@@ -74,6 +75,7 @@ JenisTiket --> Skill : membutuhkan
 
 ' --- Laporan mandiri ---
 LaporanMandiri --> JenisTiket : jenis pekerjaan
+LaporanMandiri --> AreaKerja : lokasi
 
 ' --- Tugas rutin ---
 JadwalRutin o-- ItemChecklist

@@ -24,9 +24,9 @@ Hasil sesi ini menjadi dasar tahap berikutnya (analysis/preliminary design). Per
 
 | Bahan | Lokasi | Isi singkat |
 |---|---|---|
-| Teks use case dan acceptance criteria | [`docs/requirements/use-case-inti.md`](../requirements/use-case-inti.md), draf 3.5 | 10 use case inti, 3 proses sistem, 63 kebutuhan fungsional, 64 skenario uji, keputusan K-1 sampai K-28 |
+| Teks use case dan acceptance criteria | [`docs/requirements/use-case-inti.md`](../requirements/use-case-inti.md), draf 3.6 | 10 use case inti, 3 proses sistem, 64 kebutuhan fungsional, 65 skenario uji, keputusan K-1 sampai K-29 |
 | Domain model | [`docs/iconix/domain-model.md`](../iconix/domain-model.md) | 21 istilah utama (Tiket, Laporan Mandiri, Tugas Rutin, dan lainnya) beserta hubungannya |
-| GUI storyboard dan prototype | [`docs/iconix/storyboard/`](../iconix/storyboard/) | 123 layar dalam 4 zona; 50 flow prototype (satu flow per skenario) yang bisa dicoba di FigCraft lewat Present |
+| GUI storyboard dan prototype | [`docs/iconix/storyboard/`](../iconix/storyboard/) | 124 layar dalam 4 zona; 51 flow prototype (satu flow per skenario) yang bisa dicoba di FigCraft lewat Present |
 
 **Persiapan teknis:**
 - buka `storyboard.figcraft` di FigCraft;
@@ -67,7 +67,7 @@ Setiap flow di FigCraft dinamai `UC-xx · …`, dan deskripsinya memuat skenario
 
 | No | Flow | Pertanyaan pemandu untuk Koordinator |
 |---|---|---|
-| 1 | `UC-01 · Basic course` | Apakah isian laporan (deskripsi, satu foto, lokasi opsional) cukup bagi pelapor di FSM? |
+| 1 | `UC-01 · Basic course` | Apakah isian laporan (deskripsi, lokasi gedung/area dan detail ruang, satu foto, GPS opsional) cukup bagi pelapor di FSM? |
 | 2 | `UC-01 · A4 PS-01 gagal` | Bila AI gagal mengklasifikasi, Tiket tetap masuk dan diklasifikasi manual. Apakah ini sesuai? |
 | 3 | `UC-54 · Basic course` | Siapa atasan yang ditunjuk mengklasifikasi Tiket (K-13)? |
 | 4 | `UC-09 · Basic course`, `UC-09 · A2` | Apakah aturan "siapa cepat dia dapat" sesuai praktik petugas? |
@@ -104,6 +104,7 @@ Setiap flow di FigCraft dinamai `UC-xx · …`, dan deskripsinya memuat skenario
 - Rating 1–5 **wajib** saat Pelapor menerima hasil. Komentar opsional, dan keduanya terkunci setelah Tiket selesai (FR-VER-011/012/014).
 - Hanya **satu Atasan yang ditunjuk** yang dapat mengklasifikasi Tiket secara manual (K-13).
 - Klasifikasi AI ditunggu **paling lama 30 detik**. Setelah itu Tiket ditandai Belum terklasifikasi (K-14).
+- Lokasi (gedung/area) **wajib** dipilih di formulir laporan dan laporan mandiri, detail ruang opsional, dan GPS tetap opsional (K-29).
 - Foto: **satu foto JPG/PNG maksimal 5 MB** per unggahan (K-19).
 - Bukti Tugas Rutin (foto akhir, GPS) **mengikuti pengaturan jadwal**; jadwal boleh tidak mewajibkan bukti (K-20).
 - Tanda Overdue **permanen**, dan tugas yang terlambat tetap boleh diselesaikan (BR-037).
@@ -115,7 +116,7 @@ Setiap flow di FigCraft dinamai `UC-xx · …`, dan deskripsinya memuat skenario
 - daftar **Jenis Tiket** dan **Skill** yang dibutuhkan setiap jenis;
 - Skill setiap Petugas;
 - daftar **Unit Kerja**;
-- daftar **Area Kerja** (gedung dan lantai) untuk tugas rutin.
+- daftar **Area Kerja** (gedung dan lantai) untuk lokasi Tiket, Laporan Mandiri, dan Tugas Rutin.
 
 ---
 
@@ -132,7 +133,7 @@ Setiap flow di FigCraft dinamai `UC-xx · …`, dan deskripsinya memuat skenario
 | 6 | Use case dikelompokkan dalam paket dan punya use case diagram | Terpenuhi | 3 paket proses bisnis di use case diagram (Bagian 3.3) |
 | 5 | Use case ditulis dalam konteks model objek | Terpenuhi | Istilah berhuruf kapital adalah kelas domain model; semua kelas dipakai di teks |
 | 4 | Use case ditulis dalam konteks antarmuka | Terpenuhi | Setiap langkah menyebut halaman dan tombol; konvensi Bagian 7 |
-| 3 | Use case dilengkapi storyboard atau prototype | Terpenuhi | 123 layar dan 50 flow prototype |
+| 3 | Use case dilengkapi storyboard atau prototype | Terpenuhi | 124 layar dan 51 flow prototype |
 | 2 | Direview bersama pengguna dan pemangku kepentingan nonteknis | **Sesi ini** | — |
 | 1 | Review mengikuti "delapan langkah" | Lihat B.2 | — |
 
@@ -145,15 +146,15 @@ Setiap flow di FigCraft dinamai `UC-xx · …`, dan deskripsinya memuat skenario
 | 3 | Pastikan teks tidak terlalu abstrak | Semua pesan ditulis kata per kata, dan isi halaman ditetapkan (K-22, K-24, K-27). |
 | 4 | Teks mencerminkan GUI | Nama halaman dan tombol sama persis dengan storyboard. Temuan storyboard dimasukkan sebagai K-18–K-27. |
 | 5 | Sebut objek domain dengan namanya | Semua istilah memakai nama kelas domain model (K-17). |
-| 6 | Semua alternate course ada | 64 skenario uji minimal; setiap alternate punya AC (K-28). |
-| 7 | Telusuri setiap requirement ke use case | Ke-63 FR sudah dirujuk minimal satu use case atau proses sistem (diperiksa otomatis). |
+| 6 | Semua alternate course ada | 65 skenario uji minimal; setiap alternate punya AC (K-28). |
+| 7 | Telusuri setiap requirement ke use case | Ke-64 FR sudah dirujuk minimal satu use case atau proses sistem (diperiksa otomatis). |
 | 8 | Use case menggambarkan tujuan pengguna | **Dikonfirmasi di sesi** (pertanyaan umum di A.5). |
 
 ### B.3 Pemeriksaan silang (Subbab 3.2.3)
 
 | Pemeriksaan | Hasil |
 |---|---|
-| Setiap FR terwakili use case | 63/63 FR dirujuk |
+| Setiap FR terwakili use case | 64/64 FR dirujuk (termasuk FR-TKT-100, K-29) |
 | Setiap objek pada use case ada di domain model | Semua kelas domain model muncul di teks; tidak ditemukan istilah domain yang tidak terdaftar |
 | Setiap alternate course punya acceptance criteria | Terpenuhi setelah K-28 |
 | Setiap halaman di teks use case punya storyboard | Ke-20 halaman di Bagian 11 dokumen use case (termasuk Halaman Profil) ditambah Halaman Masuk |
@@ -166,9 +167,9 @@ Setiap flow di FigCraft dinamai `UC-xx · …`, dan deskripsinya memuat skenario
 
 | Artefak | Versi | Reviewer | Peran | Keputusan* | Catatan |
 |---|---|---|---|---|---|
-| Teks use case dan AC | draf 3.5 | | Koordinator SI FSM | | |
+| Teks use case dan AC | draf 3.6 | | Koordinator SI FSM | | |
 | Domain model | 15 Nov 2026 | | Koordinator SI FSM | | |
-| GUI storyboard dan prototype | commit `efee6f2` | | Koordinator SI FSM | | |
+| GUI storyboard dan prototype | versi terbaru di repo | | Koordinator SI FSM | | |
 
 \* Disetujui / Disetujui dengan perbaikan / Perlu review ulang
 
