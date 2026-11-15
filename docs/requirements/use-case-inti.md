@@ -1,17 +1,18 @@
 # Requirement dan Use Case Inti — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 
-**Versi:** draf 3.4 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
+**Versi:** draf 3.5 (15 Nov 2026). Draf sebelumnya tersimpan di riwayat git file ini.
 - Draf 3.1 menindaklanjuti temuan inventaris GUI storyboard T-01 sampai T-21 (K-18 sampai K-23).
 - Draf 3.2 menindaklanjuti tinjauan gambar storyboard percontohan UC-01 dan UC-09 (K-24, K-25).
 - Draf 3.3 menambahkan tombol Kembali (K-26).
 - Draf 3.4 menetapkan isi halaman daftar dan detail selain Tiket (K-27).
+- Draf 3.5 menambahkan AC untuk alternate "daftar kosong" yang belum punya AC (K-28).
 **Tahap ICONIX:** Requirements (Subbab 3.2.2). Belum melalui Milestone 1: Requirements Review.
 
 **Sumber:**
 - `Dokumen_Perencanaan_TA_FSM_UNDIP.md`: FR, NFR, BR, daftar 53 UC, narasi proses bisnis, dan AC FR-AI;
 - `Keputusan_UseCase_Inti_4Nov2026.md`: 9 use case inti awal;
 - naskah skripsi Subbab 1.5, Subbab 3.2, dan Subbab 3.2.1–3.2.9;
-- keputusan peneliti atas K-1 sampai K-27 pada 15 Nov 2026 (Bagian 9);
+- keputusan peneliti atas K-1 sampai K-28 pada 15 Nov 2026 (Bagian 9);
 - temuan inventaris GUI storyboard (T-01 sampai T-21) yang disusun dengan bantuan ChatGPT;
 - domain model [`docs/iconix/domain-model.md`](../iconix/domain-model.md);
 - panduan metode [`docs/metode/panduan-eksperimen.md`](../metode/panduan-eksperimen.md).
@@ -474,6 +475,7 @@ Skenario uji minimal: 4. Pengujian dilakukan dari sisi aplikasi dengan n8n tirua
 - **AC-54-3:** **Given** Jenis Tiket belum dipilih, **When** Atasan menekan Simpan Klasifikasi, **Then** sistem menampilkan pesan "Jenis Tiket wajib dipilih" dan tidak mengubah Klasifikasi.
 - **AC-54-4:** **Given** Tiket sudah di-claim Petugas, **When** Atasan mengirim perubahan Klasifikasi, **Then** sistem menolak permintaan dan tidak mengubah Klasifikasi.
 - **AC-54-5:** **Given** pengguna yang bukan Atasan yang ditunjuk, termasuk Atasan lain, **When** ia membuka halaman atau mengirim permintaan klasifikasi ke endpoint, **Then** sistem tidak menampilkan menu dan menolak permintaan (NFR-SEC-002).
+- **AC-54-6:** **Given** tidak ada Tiket Open yang belum memiliki primary assignee, **When** Atasan yang ditunjuk membuka Halaman Klasifikasi Tiket, **Then** sistem menampilkan pesan "Tidak ada Tiket yang perlu diklasifikasi" (A3).
 
 Skenario uji minimal: 5.
 
@@ -726,6 +728,7 @@ Skenario uji minimal: 6.
 - **AC-29-2:** **Given** laporan bawahan berstatus Menunggu Verifikasi, **When** Atasan menekan Tolak dengan alasan, **Then** sistem mengubah status menjadi Reopen, menyimpan alasan, dan tetap menyimpan Hasil Pekerjaan lama.
 - **AC-29-3:** **Given** alasan kosong di Formulir Penolakan, **When** Atasan menekan Kirim, **Then** sistem menampilkan pesan "Alasan wajib diisi" dan tidak mengubah status.
 - **AC-29-4:** **Given** laporan milik Petugas yang bukan bawahan, **When** Atasan membuka daftar atau mengirim permintaan verifikasi, **Then** sistem tidak menampilkan laporan dan menolak permintaan.
+- **AC-29-5:** **Given** tidak ada Laporan Mandiri bawahan yang berstatus Menunggu Verifikasi, **When** Atasan membuka Halaman Verifikasi Laporan Mandiri, **Then** sistem menampilkan pesan "Tidak ada Laporan Mandiri yang menunggu verifikasi" (A3).
 
 Skenario uji minimal: 5.
 
@@ -846,6 +849,7 @@ Skenario uji minimal: 2. Waktu disimulasikan pada lingkungan uji.
 - **AC-18-6:** **Given** Tugas Rutin berstatus Reopen, **When** Petugas mengajukannya lagi dengan bukti lengkap, **Then** sistem mengubah status menjadi Menunggu Verifikasi dan tetap menyimpan Hasil Pekerjaan sebelumnya.
 - **AC-18-7:** **Given** Akun Telegram Petugas sudah ditautkan, **When** n8n memanggil endpoint pengajuan dengan checklist wajib lengkap, foto, dan lokasi, **Then** hasilnya sama dengan AC-18-1.
 - **AC-18-8:** **Given** foto akhir diwajibkan dan kosong, atau foto berformat selain JPG/PNG atau lebih dari 5 MB, **When** Petugas menekan Ajukan, **Then** sistem menampilkan pesan yang sesuai dan tidak mengubah status (K-20, BR-100).
+- **AC-18-9:** **Given** Petugas tidak memiliki Tugas Rutin berstatus Aktif atau Reopen untuk hari ini, **When** ia membuka Halaman Tugas Rutin Hari Ini, **Then** sistem menampilkan pesan "Tidak ada Tugas Rutin hari ini" (A4).
 
 Skenario uji minimal: 8.
 
@@ -916,6 +920,7 @@ Skenario uji minimal: 2. Waktu disimulasikan pada lingkungan uji.
 - **AC-30-2:** **Given** Tugas Rutin bawahan berstatus Menunggu Verifikasi, **When** Atasan menekan Tolak dengan alasan, **Then** sistem mengubah status menjadi Reopen, menyimpan alasan, dan tetap menyimpan Hasil Pekerjaan lama.
 - **AC-30-3:** **Given** alasan kosong di Formulir Penolakan, **When** Atasan menekan Kirim, **Then** sistem menampilkan pesan "Alasan wajib diisi" dan tidak mengubah status.
 - **AC-30-4:** **Given** Tugas Rutin milik Petugas yang bukan bawahan, **When** Atasan membuka daftar atau mengirim permintaan verifikasi, **Then** sistem tidak menampilkannya dan menolak permintaan.
+- **AC-30-5:** **Given** tidak ada Tugas Rutin bawahan yang berstatus Menunggu Verifikasi, **When** Atasan membuka Halaman Verifikasi Tugas Rutin, **Then** sistem menampilkan pesan "Tidak ada Tugas Rutin yang menunggu verifikasi" (A3).
 
 Skenario uji minimal: 5.
 
@@ -1014,6 +1019,7 @@ Aplikasi hanya diuji pada titik pertukaran datanya. Penjadwalan Tugas Rutin dan 
 | K-25 | Tombol Ambil Lokasi tidak memberi respons yang terlihat (S-2), padahal setiap aksi pengguna harus punya respons sistem (Rosenberg & Stephens, 2007, Bab 3). | Sistem menampilkan "Lokasi berhasil diambil". Tombol Hapus Foto hanya tampil setelah foto dipilih. | Bagian 7 konvensi; UC-01 L5, UC-18 L7 |
 | K-26 | Storyboard mid-fidelity menunjukkan bahwa belum ada cara kembali dari sebuah halaman. | Setiap halaman selain Beranda memiliki tombol ← (Kembali) yang menampilkan halaman sebelumnya tanpa menyimpan isian yang belum dikirim. | Bagian 7 konvensi butir 12 |
 | K-27 | Storyboard UC-16, UC-29, dan tugas rutin membutuhkan isi halaman daftar dan detail Laporan Mandiri, Jadwal Rutin, dan Tugas Rutin, tetapi konvensi butir 10 hanya mengatur Tiket. | Isi halaman ditetapkan di konvensi butir 13, semuanya dari kelas domain model. | Bagian 7 konvensi butir 13; UC-16, UC-29, UC-32, UC-18, UC-30 |
+| K-28 | Pemetaan flow prototype ke AC menunjukkan empat alternate "daftar kosong" belum punya acceptance criteria, padahal sudah dihitung sebagai skenario uji (Martinelli, 2026: setiap alur harus punya kriteria yang dapat diuji). | Ditambahkan AC-54-6 (UC-54 A3), AC-29-5 (UC-29 A3), AC-18-9 (UC-18 A4), dan AC-30-5 (UC-30 A3). Jumlah skenario uji minimal tidak berubah (64). | UC-54, UC-29, UC-18, UC-30 |
 
 Tidak ada keputusan yang masih terbuka.
 
