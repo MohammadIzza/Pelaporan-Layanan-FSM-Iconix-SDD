@@ -1,7 +1,7 @@
 # Domain Model Awal
 
 **Tahap ICONIX:** Requirements (Subbab 3.2.2, aktivitas 3). Belum melalui Milestone 1: Requirements Review.
-**Sumber:** kata benda pada teks use case [`docs/requirements/use-case-inti.md`](../requirements/use-case-inti.md) (draf 2).
+**Sumber:** kata benda pada teks use case [`docs/requirements/use-case-inti.md`](../requirements/use-case-inti.md) (awalnya draf 2, diselaraskan sampai draf 3.6).
 **Diagram:** [`domain-model.puml`](domain-model.puml) (sumber PlantUML), [`domain-model.png`](domain-model.png) (hasil render).
 
 ![Domain model awal](domain-model.png)
@@ -74,3 +74,5 @@ Atribut, operasi, dan multiplisitas ditambahkan pada tahap robustness analysis d
 | 4 | Rating | `Rating` dipisahkan dari `Verifikasi` karena hanya berlaku untuk tiket. | — |
 | 5 | Atasan yang ditunjuk (K-13) | Dimodelkan sebagai salah satu `Peran`. | — |
 | 6 | Cara penggambaran | Mengikuti pedoman Rosenberg & Stephens (2007, Bab 2): tanpa multiplisitas, tanpa kelas abstrak, dan tanpa kotak paket. | `Pekerjaan` menjadi kelas biasa. |
+| 7 | Lokasi dan foto awal (15 Nov 2026, setelah K-18 dan K-29) | Lokasi digambar sekali sebagai `Pekerjaan → AreaKerja` karena berlaku untuk Tiket, Laporan Mandiri, dan Tugas Rutin (generalisasi). Foto awal Laporan Mandiri digambar sebagai `LaporanMandiri ◇ Lampiran`. | Menggantikan relasi lokasi terpisah pada Tiket dan Laporan Mandiri. |
+| 8 | Kerapian diagram | Tata letak berlapis: organisasi dan pengguna (atas), pekerjaan (tengah), jenis pekerjaan dan kelas pendukung (bawah). Peran "dibuat oleh" dan "petugas ditugaskan" dari JadwalRutin ke Pengguna digambar dalam satu garis berlabel dua. | Isi kelas tidak berubah. |

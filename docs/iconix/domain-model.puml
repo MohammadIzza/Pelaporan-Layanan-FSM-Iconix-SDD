@@ -1,88 +1,78 @@
-' Domain model awal (tahap Requirements ICONIX).
+' Domain model (tahap Requirements ICONIX).
 ' Draf disusun dengan bantuan asisten AI dari kata benda pada teks use case
-' docs/requirements/use-case-inti.md (draf 2), lalu ditinjau peneliti
-' pada 15 Nov 2026. Belum melalui Requirements Review.
-' Penjelasan setiap kelas: domain-model.md.
+' docs/requirements/use-case-inti.md, lalu ditinjau peneliti.
+' Belum melalui Requirements Review. Penjelasan setiap kelas: domain-model.md.
 '
 ' Mengikuti pedoman domain modeling Rosenberg & Stephens (2007, Bab 2):
 ' hanya nama kelas; agregasi, generalisasi, dan asosiasi penting; tanpa
-' atribut, operasi, multiplisitas, maupun kelas abstrak.
+' atribut, operasi, multiplisitas, kelas abstrak, maupun kotak paket.
+' Tata letak berlapis: organisasi dan pengguna (atas), pekerjaan (tengah),
+' jenis pekerjaan dan kelas pendukung (bawah).
 
 @startuml domain-model
-title Domain Model Awal — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
+title Domain Model — Aplikasi Pelaporan Layanan Operasional FSM UNDIP
 hide circle
 hide empty members
 skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 90
+skinparam defaultFontName Arial
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #424242
+  FontSize 14
+}
+skinparam ArrowColor #555555
+skinparam ArrowFontSize 11
+skinparam ArrowFontColor #333333
 
-class Pengguna
-class Peran
-class UnitKerja
-class Skill
-class AkunTelegram
-
-class Pekerjaan
-class Tiket
-class LaporanMandiri
-class TugasRutin
-class HasilPekerjaan
-class Verifikasi
-class TimelineEvent
-class Lampiran
-class LokasiGPS
-
-class JenisTiket
-class Klasifikasi
-class Rating
-
-class JadwalRutin
-class AreaKerja
-class ItemChecklist
-class HasilChecklist
-
-' --- Organisasi dan pengguna ---
-Pengguna o-- Peran
-Pengguna o-- Skill
-Pengguna o-- AkunTelegram
+' ===== organisasi dan pengguna (atas) =====
+Pengguna o-left- Peran
+Pengguna o-left- AkunTelegram
 Pengguna --> UnitKerja : bekerja di
-Pengguna -- Pengguna : atasan dari >
+Pengguna o-right- Skill
+Pengguna -up- Pengguna : atasan dari >
 
-' --- Generalisasi pekerjaan ---
-Pekerjaan <|-- Tiket
-Pekerjaan <|-- LaporanMandiri
-Pekerjaan <|-- TugasRutin
+' ===== pekerjaan (tengah) =====
+Pengguna <-down- Pekerjaan : primary assignee
+Verifikasi -up-> Pengguna : verifikator
+TimelineEvent -up-> Pengguna : pelaku
+Pekerjaan o-right- Verifikasi
+Pekerjaan o-right- TimelineEvent
+Verifikasi -[hidden]right- TimelineEvent
+Pekerjaan o-right- HasilPekerjaan
+Pekerjaan -right-> AreaKerja : lokasi
 
-' --- Bagian bersama setiap pekerjaan ---
-Pekerjaan --> Pengguna : primary assignee
-Pekerjaan o-- HasilPekerjaan
-Pekerjaan o-- Verifikasi
-Pekerjaan o-- TimelineEvent
-Verifikasi --> Pengguna : verifikator
-TimelineEvent --> Pengguna : pelaku
-HasilPekerjaan o-- Lampiran
-HasilPekerjaan o-- LokasiGPS
+Pekerjaan <|-down- Tiket
+Pekerjaan <|-down- LaporanMandiri
+Pekerjaan <|-down- TugasRutin
 
-' --- Permintaan layanan (tiket) ---
-Tiket --> Pengguna : pelapor
-Tiket --> UnitKerja : unit asal
-Tiket --> AreaKerja : lokasi
-Tiket --> JenisTiket
-Tiket o-- Lampiran
-Tiket o-- LokasiGPS
-Tiket o-- Klasifikasi
-Tiket o-- Rating
-Klasifikasi --> JenisTiket
-JenisTiket --> Skill : membutuhkan
+' ===== permintaan layanan =====
+Tiket -up-> Pengguna : pelapor
+Tiket -up-> UnitKerja : unit asal
+Tiket -down-> JenisTiket
+Tiket o-down- Klasifikasi
+Tiket o-down- Rating
+Tiket o-down- Lampiran
+Tiket o-down- LokasiGPS
+Klasifikasi -right-> JenisTiket
+JenisTiket -up-> Skill : membutuhkan
 
-' --- Laporan mandiri ---
-LaporanMandiri --> JenisTiket : jenis pekerjaan
-LaporanMandiri --> AreaKerja : lokasi
+' ===== laporan mandiri =====
+LaporanMandiri -down-> JenisTiket : jenis pekerjaan
+LaporanMandiri o-down- Lampiran : foto awal
 
-' --- Tugas rutin ---
-JadwalRutin o-- ItemChecklist
-JadwalRutin --> AreaKerja
-JadwalRutin --> Pengguna : dibuat oleh (atasan)
-JadwalRutin --> Pengguna : petugas ditugaskan
-JadwalRutin --> TugasRutin : menghasilkan
-HasilPekerjaan o-- HasilChecklist
-HasilChecklist --> ItemChecklist
+' ===== hasil pekerjaan =====
+HasilPekerjaan o-down- Lampiran
+HasilPekerjaan o-down- LokasiGPS
+HasilPekerjaan o-down- HasilChecklist
+
+' ===== tugas rutin =====
+TugasRutin <-down- JadwalRutin : menghasilkan
+JadwalRutin o-down- ItemChecklist
+JadwalRutin -up-> AreaKerja
+JadwalRutin -left-> Pengguna : dibuat oleh (atasan),\npetugas ditugaskan
+HasilChecklist -down-> ItemChecklist
 @enduml
