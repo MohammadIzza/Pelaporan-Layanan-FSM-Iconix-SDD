@@ -1034,7 +1034,7 @@ Tidak ada keputusan yang masih terbuka.
 
 ## 11. Langkah Berikutnya (sesuai ICONIX)
 
-1. Buat GUI storyboard untuk setiap halaman yang disebut di teks use case (20 halaman, ditambah Halaman Masuk sebagai fungsi pendukung):
+1. ~~Buat GUI storyboard~~ **Selesai untuk 10 use case:** [`docs/iconix/storyboard/`](../iconix/storyboard/), dengan file sumber FigCraft `storyboard.figcraft` dan satu PNG per proses bisnis. Halaman Masuk dan Halaman Profil (fungsi pendukung) belum digambar. Daftar halaman yang dirujuk teks use case (20 halaman, ditambah Halaman Masuk):
    - navigasi: Beranda, Tiket Saya, Laporan Mandiri Saya, Profil;
    - permintaan layanan: Buat Permintaan Layanan, Detail Tiket, Klasifikasi Tiket, Antrean Tiket;
    - formulir bersama: Formulir Penyelesaian, Formulir Penilaian, Formulir Penolakan;
