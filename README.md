@@ -43,7 +43,7 @@ Requirements ─► Milestone 1: Requirements Review
 
 | Lokasi | Isi |
 |---|---|
-| `docs/` | Dokumen penelitian yang disusun peneliti: kebutuhan dan teks use case (`requirements/`), draf proposal skripsi Bab I–III sebagai konteks penelitian (`skripsi/`), artefak ICONIX (`iconix/`), panduan eksperimen berdasarkan Rosenberg & Stephens, Martinelli, dan Spec Kit (`metode/`), serta templat catatan iterasi (`eksperimen/`) |
+| `docs/` | Dokumen penelitian yang disusun peneliti: kebutuhan dan teks use case (`requirements/`), draf proposal skripsi Bab I–III sebagai konteks penelitian (`skripsi/`), artefak ICONIX (`iconix/`), panduan eksperimen berdasarkan Rosenberg & Stephens, Martinelli, dan Spec Kit (`metode/`), templat catatan iterasi (`eksperimen/`), serta bahan dan catatan milestone review ICONIX (`reviews/`) |
 
 Struktur lain dibuat otomatis oleh GitHub Spec Kit (`specify init` dan tahap `/speckit.*`) dan oleh AI coding agent saat membangun aplikasi Next.js.
 
